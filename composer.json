@@ -1,0 +1,19 @@
+{
+    "name": "epeeivan/sail-php",
+    "description": "the most easy php framework",
+    "type": "framework",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Epeeivan\\SailPhp\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "BEBE EPEE IVAN SAMPI",
+            "email":"epeeivan@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
