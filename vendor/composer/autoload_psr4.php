@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Epeeivan\\SailPhp\\' => array($baseDir . '/src'),
+    'Epeeivan\\SailPhp\\' => array($baseDir . '/app'),
 );

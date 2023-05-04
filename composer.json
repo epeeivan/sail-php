@@ -2,7 +2,7 @@
     "name": "sail-php/sail-php",
     "description": "the most easy php framework",
     "type": "project",
-    "keywords": ["framework", "laravel"],
+    "keywords": ["framework", "sail-php"],
     "license": "MIT",
     "autoload": {
         "psr-4": {

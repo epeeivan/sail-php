@@ -16,7 +16,7 @@ class ComposerStaticInitb351a6002358d9d7e45fd3f8b0cb57b6
     public static $prefixDirsPsr4 = array (
         'Epeeivan\\SailPhp\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src',
+            0 => __DIR__ . '/../..' . '/app',
         ),
     );
 
