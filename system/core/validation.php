@@ -3,6 +3,8 @@
 
 
 */
+namespace system\core;
+
 class Validation{
     /**
      * @var array

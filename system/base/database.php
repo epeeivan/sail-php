@@ -1,5 +1,6 @@
 <?php
-
+namespace system\base;
+use PDO;
     /**
      *
      */
@@ -283,6 +284,14 @@ class Database
             # code...
             $this->attributes[$attribute]["type"] = $value;
         }
+    }
+
+    /**
+     * @param $attribute
+     * @return void
+     */
+    public function unset($attribute){
+        $this->unset($this->attributes[$attribute]);
     }
 
     /**

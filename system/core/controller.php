@@ -1,5 +1,7 @@
 <?php
-
+namespace system\core;
+use system\Loader;
+use system\base\Database;
 class Controller 
 {
     protected $base_model=null;

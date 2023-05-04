@@ -1,4 +1,6 @@
 <?php
+namespace system\core;
+use system\Loader;
 
 class Router
 {
@@ -101,12 +103,22 @@ class Router
         //var_dump(implode('/',$GLOBALS['routes']));
         foreach ($GLOBALS['routes'] as $routeName => $routeInfos){
             $tmp_route = null;
-            $tmp_route = preg_replace('#'.$routeName.'#',$routeInfos['resource'],$urlRoute);
-            if ($tmp_route!=$urlRoute){
-                self::setBuildRoute($tmp_route);
-                self::setCurrentRoute($routeInfos);
-                return true;
+
+            if (is_callable($routeInfos['resource'])){
+                if(preg_match('#'.$routeName.'#',$urlRoute)){
+                    self::setCurrentRoute($routeInfos);
+                    return true;
+                }
+            }else{
+                $tmp_route = preg_replace('#'.$routeName.'#',$routeInfos['resource'],$urlRoute);
+
+                if ($tmp_route!=$urlRoute){
+                    self::setBuildRoute($tmp_route);
+                    self::setCurrentRoute($routeInfos);
+                    return true;
+                }
             }
+
         }
 
         return false;
@@ -128,11 +140,13 @@ class Router
         $path = null;
 
         if (self::routeExist($urlRoute)){
-
-            $buildRouteArray = explode('/',self::getBuildRoute());
-            //
-            $path = self::getCurrentRoute('path').$buildRouteArray[0];
-
+            if (is_callable(self::getCurrentRoute('resource'))){
+                return self::getCurrentRoute('resource');
+            }else{
+                $buildRouteArray = explode('/',self::getBuildRoute());
+                //
+                $path = self::getCurrentRoute('path').$buildRouteArray[0];
+            }
         }else{
             $buildRouteArray = explode('/',$urlRoute);
         }
@@ -181,29 +195,35 @@ class Router
      */
     public static function handle_request($urlRoute, $isDefault = false){
         $resourceInfo = self::parseRequest($urlRoute);
+
         if (!empty($urlRoute)){
-            if (Loader::loadResource($resourceInfo['path'])){
-                $resource = Loader::call($resourceInfo['name']);
-                if (!empty($resourceInfo['method']) ){
-                    if (method_exists($resource,$resourceInfo['method'])){
-                        $method = $resourceInfo['method'];
-                        $resource->$method(!empty($resourceInfo['params'])? $resourceInfo['params']: null);
+            if (is_callable($resourceInfo)){
+                $resourceInfo();
+            }else{
+                if (Loader::loadResource($resourceInfo['path'])){
+                    $resource = Loader::call($resourceInfo['name']);
+                    if (!empty($resourceInfo['method']) ){
+                        if (method_exists($resource,$resourceInfo['method'])){
+                            $method = $resourceInfo['method'];
+                            $resource->$method(!empty($resourceInfo['params'])? $resourceInfo['params']: null);
+                        }else{
+                            self::handle_request('404_error');
+                        }
+                    }else{
+                        $method = 'index';
+                        $resource->$method();
+                    }
+                }else{
+                    if (!$isDefault){
+                        $default = 'default/'.$resourceInfo['name'].'/'.implode('/',$resourceInfo['params']);
+                        self::handle_request($default,true);
                     }else{
                         self::handle_request('404_error');
                     }
-                }else{
-                        $method = 'index';
-                        $resource->$method();
-                }
-            }else{
-                if (!$isDefault){
-                    $default = 'default/'.$resourceInfo['name'].'/'.implode('/',$resourceInfo['params']);
-                    self::handle_request($default,true);
-                }else{
-                    self::handle_request('404_error');
-                }
 
+                }
             }
+
         }else{
             if(self::routeExist('default')){
                 self::handle_request('default');

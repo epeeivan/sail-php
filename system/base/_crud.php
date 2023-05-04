@@ -1,27 +1,5 @@
 <?php
-/**
- * miag-api
- *
- * api of the miag CGE exclusive use application
- *
- * This content is released under the MIT License (MIT)
- *
- * Copyright (c) 2020, vitteck-team
- *
- *the use of this code is reserved exclusively for
- *developers and miag employees this code is private and
- *will not be shared anyone who has access to its sources
- *will be considered as hackers
- *
- * @package    maig-api
- * @author    vitteck-team -beis
- * @copyright    Copyright (c) 2020, beis. (https://vitteck.com/)
- * @copyright    Copyright (c) 2020, vitteck-team (https://vitteck.com/)
- * @license
- * @link    https://vitteck.com
- * @since    Version 1.0.0
- * @filesource
- */
+namespace system\base;
 
 /**
  * groups together a set of generic

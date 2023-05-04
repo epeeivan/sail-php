@@ -3,6 +3,7 @@
 /**
  *
  */
+namespace system;
 class Loader
 {
     private static $controller_folder = "app/controllers/";
@@ -26,10 +27,11 @@ class Loader
     public static function init()
     {
         # code...
+        self::getFolderContent(self::$base_folder);
+
         self::getFolderContent(self::$core_folder);
         self::load("app/config/config.php");
         self::load("app/routes/routes.php");
-        self::getFolderContent(self::$base_folder);
         self::loadPrimary();
 
 

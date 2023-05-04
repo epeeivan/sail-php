@@ -1,9 +1,18 @@
 <?php
+namespace system\core;
+
+
+use system\base\commons;
+use system\base\Crud;
+use system\base\dbsetter;
 
 class Model
 {
     protected $schema = array();
     protected $currentColumn = '';
+    use Crud;
+    use dbsetter;
+    use commons;
     public function __construct()
     {
     }

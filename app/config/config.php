@@ -6,14 +6,14 @@ framework like language,database..
 */
 setConfig([
     // 
-    "base_url"=>"",
-    "app_name"=>"",
-	"language"=>"fr",
+    "base_url"=>"http://127.0.0.1/my_php_framework/",
+    "app_name"=>"my_php_framework",
+	"language"=>"en",
     "database"=>
     [
         "host"=>"localhost",
         "pass"=>"",
-        "dbname"=>"",
+        "dbname"=>"multipresta",
         "user"=>"root",
 
     ],
@@ -25,8 +25,13 @@ setConfig([
         "validations_folder"=>"app/validations/",
         "schemas_folder"=>"app/schemas/",
         "languages_folder"=>"app/language/",
+        "storage_folder"=>"app/storage/",
     ],
-    "urlLangPrefix"=>["en","fr"]
+    "urlLangPrefix"=>["en","fr"],
+    "session"=>[
+        "driver"=>"database",
+        "lifetime"=>120,
+    ]
     
 ]);
 

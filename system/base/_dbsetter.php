@@ -1,7 +1,9 @@
 <?php
+namespace system\base;
+
 trait dbsetter
 {
-	private $db;
+	protected $db;
 	
 	public function setDb($db){
 			$this->db=$db;

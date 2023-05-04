@@ -1,4 +1,6 @@
 <?php
+namespace system\base;
+
 trait commons{
     /**
      * @param array $data
