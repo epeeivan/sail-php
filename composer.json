@@ -1,8 +1,9 @@
 {
     "name": "sail-php/sail-php",
     "description": "the most easy php framework",
-    "type": "framework",
-    "license": "proprietary",
+    "type": "project",
+    "keywords": ["framework", "laravel"],
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Epeeivan\\SailPhp\\": "app/"
@@ -14,5 +15,9 @@
             "email":"epeeivan@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": "^8.0.2"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
