@@ -6,14 +6,14 @@ framework like language,database..
 */
 setConfig([
     // 
-    "base_url"=>"http://127.0.0.1/my_php_framework/",
-    "app_name"=>"my_php_framework",
+    "base_url"=>"http://127.0.0.1/sail-php/",
+    "app_name"=>"sail-php",
 	"language"=>"en",
     "database"=>
     [
         "host"=>"localhost",
         "pass"=>"",
-        "dbname"=>"multipresta",
+        "dbname"=>"sail-php",
         "user"=>"root",
 
     ],
@@ -27,9 +27,10 @@ setConfig([
         "languages_folder"=>"app/language/",
         "storage_folder"=>"app/storage/",
     ],
+    "mode"=>"debug",
     "urlLangPrefix"=>["en","fr"],
     "session"=>[
-        "driver"=>"database",
+        "driver"=>"file",
         "lifetime"=>120,
     ]
     

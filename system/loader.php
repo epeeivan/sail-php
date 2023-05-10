@@ -4,13 +4,11 @@
  *
  */
 namespace system;
+
+use Exception;
+
 class Loader
 {
-    private static $controller_folder = "app/controllers/";
-    private static $models_folder = "app/models/";
-    private static $views_folder = "app/views/";
-    private static $libraries_folder = "app/libraries/";
-    private static $validations_folder = "app/validations/";
     private static $base_folder = "system/base";
     private static $core_folder = "system/core";
 
@@ -131,21 +129,27 @@ class Loader
     public static function load($link,$data=null)
     {
         # code...
-        if (!file_exists($link) /*|| !file_exists($m_link)*/ ) {
-            # code...
-            return false;
-        } else {
-            // $this->load($m_link);
-            if (!is_null($data)) {
+        
+            //code...
+            if (!file_exists($link) /*|| !file_exists($m_link)*/ ) {
                 # code...
-                foreach ($data as $key => $value) {
+                throw new Exception("Error Processing Request", 1);
+                
+                return false;
+            } else {
+                // $this->load($m_link);
+                if (!is_null($data)) {
                     # code...
-                    $$key=$value;
+                    foreach ($data as $key => $value) {
+                        # code...
+                        $$key=$value;
+                    }
                 }
+               require $link;
+                return true;
             }
-           require $link;
-            return true;
-        }
+
+
     }
 
     /**

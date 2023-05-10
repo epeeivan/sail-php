@@ -68,10 +68,10 @@ class Controller
 
         if($is_base){
             $this->base_model = Loader::model($mod);
-            $this->base_model->setDb(new Database());
+            // $this->base_model->setDb();
         }else{
             $this->$modName = Loader::model($mod);
-            $this->$modName->setDb(new Database());
+            // $this->$modName->setDb(new Database());
 
         }
     }
