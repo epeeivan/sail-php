@@ -27,9 +27,6 @@
                 <a href="" class="bg-primary-100 text-white  block p-2 rounded h-min"><?=lang("doc")?></a>
             </div>
         </div>
-    <?php
-
-    
 
 
     </div>

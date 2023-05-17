@@ -1,4 +1,5 @@
 <?php
+namespace app\model;
 use system\core\Model;
 class appGenerator_model extends Model
 {
