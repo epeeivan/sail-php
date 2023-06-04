@@ -1,5 +1,7 @@
 <?php
+
 namespace app\controllers;
+
 use app\models\appGenerator_model;
 use system\core\Controller;
 use system\core\Router;
@@ -11,7 +13,7 @@ class app extends Controller
     private $dbStructure = [];
     public function __construct()
     {
-        
+
         $this->model('appGenerator_model');
         $this->appGenerator_model->setDb();
         $this->library('codeFormatter');
@@ -30,7 +32,6 @@ class app extends Controller
     }
     function test()
     {
-        echo"dd9";
         $dbTables = $this->appGenerator_model->dbTables();
         foreach ($dbTables as $key => $table) {
             foreach ($table as $key1 => $tableName) {
@@ -117,7 +118,7 @@ class app extends Controller
             $code["validation"] .= "\$this->setRulesGroup('v" . ucfirst($tableName) . "');";
             $code["validation"] .= "\$this->setRules([";
             //
-            $code["model"] .= "use Crud;use dbsetter;use commons;use " . $tableName . "_model_schema;public function __construct(){\$this->buildSchema();}}";
+            $code["model"] .= "use " . $tableName . "_model_schema;public function __construct(){\$this->buildSchema();}}";
             //
             $code["schema"] .= "public function buildSchema(){\$this->table('" . $tableName . "');";
             //
@@ -127,6 +128,8 @@ class app extends Controller
                 if (!isset($properties["id"])) {
                     if (!$properties["is_nullable"]) {
                         $code["validation"] .= "'" . strtolower($column) . "' => 'required|" . $properties["data_type"] . (!empty($properties["max_length"]) ? "|max_length(" . $properties["max_length"] . ")" : "") . "',";
+                    } else {
+                        $code["validation"] .= "'" . strtolower($column) . "' => '" . $properties["data_type"] . (!empty($properties["max_length"]) ? "|max_length(" . $properties["max_length"] . ")" : "") . "',";
                     }
                 } else {
                     $modelName = "\$this->" . $tableName . "_model";
@@ -167,7 +170,7 @@ class app extends Controller
 
         $cCode .= "\$this->model('" . $tableName . "_model');\$this->validation('v" . ucfirst($tableName) . "');}";
 
-        $cCode .= $fPrefix . "get(){\$this->" . $tableName . "_model->get();}";
+        $cCode .= $fPrefix . "get(){\$this->responseJson(\$this->" . $tableName . "_model->get());}";
         $addUpBody = "{if(\$this->v" . ucfirst($tableName) . "->run()){\$this->" . $tableName . "_model->hydrater();if(\$this->" . $tableName . "_model->add()){ \$this->responseJson(\$_POST);}else{\$this->responseJson();}}else{\$this->responseJson();}}";
         $cCode .= $fPrefix . "add()" . $addUpBody;
         $cCode .= $fPrefix . "update()" . $addUpBody;
@@ -180,14 +183,14 @@ class app extends Controller
 
         switch ($type) {
             case 'model':
-                $basicDeclaration .= "namespace app\models;use system\core\Model; class " . $name . "_model extends Model{";
+                $basicDeclaration .= "namespace app\models;use system\core\Model;use app\schemas\\" . $name . "_model_schema; class " . $name . "_model extends Model{";
                 break;
             case 'validation':
-                $basicDeclaration .= "namespace app\/validations;use system\core\Validation;class v" . ucfirst($name) . " extends Validation{public function __construct(){";
+                $basicDeclaration .= "namespace app\\validations;use system\core\Validation;class v" . ucfirst($name) . " extends Validation{public function __construct(){";
 
                 break;
             case 'controller':
-                $basicDeclaration .= "namespace app\controllers\api;use system\core\Controller;class " . $name . " extends Controller{public function __construct(){";
+                $basicDeclaration .= "namespace app\controllers\api;use system\core\Controller;class " . $name . " extends Controller{protected $" . $name . "_model;protected $"."v" . ucfirst($name) . "; public function __construct(){";
                 break;
             case 'schema':
                 $basicDeclaration .= "namespace app\schemas;trait " . $name . "_model_schema{";
