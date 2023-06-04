@@ -8,7 +8,7 @@ class auth extends authorization{
         self::defineRoles();
     }
     public static function defineRoles(){
-       $this->authorizations = [
+       self::$authorizations = [
             "student"=>array(
                 'login' => '', 
             ),
@@ -21,6 +21,6 @@ class auth extends authorization{
             "academic_head"=>array(
                 'login' => '', 
             ),
-        ]
+        ];
     }
 }
