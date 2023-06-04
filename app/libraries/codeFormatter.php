@@ -1,5 +1,5 @@
 <?php
-
+namespace app\libraries;
 class codeFormatter
 {
     private $spacing=0;

@@ -1,27 +1,36 @@
 <?php
-
+namespace app\controllers;
+use app\models\appGenerator_model;
 use system\core\Controller;
+use system\core\Router;
+use system\Loader;
 
 class app extends Controller
 {
+    protected $appGenerator_model;
     private $dbStructure = [];
     public function __construct()
     {
+        
         $this->model('appGenerator_model');
+        $this->appGenerator_model->setDb();
         $this->library('codeFormatter');
+        // var_dump($this->codeFormatter);
     }
     function index()
     {
         //        echo "i am the app generator";
-        $dbTables = $this->appGenerator_model->dbTables();
+        var_dump(Router::getCurrentRoute());
+        // $dbTables = $this->appGenerator_model->dbTables();
         //        var_dump($dbTables);
         //        var_dump(preg_match("#([0-9]+)#","(65)",$match));
         //        var_dump($match);
         //        header("content-type:JSON");
-        $this->responseJson($this->appGenerator_model->tableColumns("useraccount"));
+        // $this->responseJson($this->appGenerator_model->tableColumns("useraccount"));
     }
     function test()
     {
+        echo"dd9";
         $dbTables = $this->appGenerator_model->dbTables();
         foreach ($dbTables as $key => $table) {
             foreach ($table as $key1 => $tableName) {

@@ -1,4 +1,5 @@
 <?php
+namespace app\controllers;
 use system\core\Controller;
 class defaultController extends Controller
 {
@@ -15,7 +16,11 @@ class defaultController extends Controller
     public function test()
     {
         # code...
+        echo "dd";
 
+    }
+    public function accueil(){
+        $this->view("accueil");
     }
 
 }

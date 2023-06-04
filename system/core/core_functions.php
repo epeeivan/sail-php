@@ -74,7 +74,7 @@ if (!function_exists("url")) {
      */
     function url(string $url = ""): string
     {
-        return (isset($_SERVER["REQUEST_SCHEME"]) ? $GLOBALS["config"]["base_url"] : "http://" . $_SERVER["HTTP_HOST"] . "/" . app_name() . "/") . $url;
+        return (isset($_SERVER["REQUEST_SCHEME"]) ? $GLOBALS["config"]["base_url"] : "http://" . $_SERVER["HTTP_HOST"] . "/" ) . $url;
     }
 }
 
@@ -182,32 +182,34 @@ if (!function_exists("getUrlRoute")) {
             ) ?
             (explode(url(), ($_SERVER['REQUEST_SCHEME'] ?? "") . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'])
             ) :
-            explode("/" . app_name() . "/", $_SERVER['REQUEST_URI'] . "/");
+            explode("/", $_SERVER['REQUEST_URI'] . "/");
+
+        return implode("/",array_filter($urlRoute));
         //
         //    echo $_SERVER['REQUEST_URI']."/";
         //    echo $urlRoute[1]."222";
-        if (count($urlRoute) > 1) {
-            //
-            $url = explode('?', $urlRoute[1])[0];
+        // if (count($urlRoute) > 1) {
+        //     //
+        //     $url = explode('?', $urlRoute[1])[0];
 
-            $eventuallyLang = explode('/', $url)[0];
-            //chek if the url contain a language preffix
-            if (in_array($eventuallyLang, getConfig('urlLangPrefix'))) {
-                //remove the
-                //            echo $eventuallyLang;
+        //     $eventuallyLang = explode('/', $url)[0];
+        //     //chek if the url contain a language preffix
+        //     if (in_array($eventuallyLang, getConfig('urlLangPrefix'))) {
+        //         //remove the
+        //         //            echo $eventuallyLang;
 
-                $url = substr($url, (strlen($eventuallyLang) + 1));
-                //            if (getConfig('language')!=$eventuallyLang) {
-                //                # code...
-                //                setLanguage($eventuallyLang);
-                //                header('Location:'.url($urlRoute[1]));
-                //            }
-            }
-            //        echo $url;
-            return $url;
-        }
+        //         $url = substr($url, (strlen($eventuallyLang) + 1));
+        //         //            if (getConfig('language')!=$eventuallyLang) {
+        //         //                # code...
+        //         //                setLanguage($eventuallyLang);
+        //         //                header('Location:'.url($urlRoute[1]));
+        //         //            }
+        //     }
+        //     //        echo $url;
+        //     return $url;
+        // }
 
-        return "";
+        // return "";
     }
 }
 if (!function_exists("isDebug")) {

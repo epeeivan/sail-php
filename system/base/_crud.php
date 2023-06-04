@@ -22,7 +22,7 @@ trait Crud
     public $error = [];
 
 
-    public function get(Array $columns = null){
+    public static function get(Array $columns = null){
         $columnssString = '*';
         !is_null($columns)?
             $columnssString = implode(',',$columns):

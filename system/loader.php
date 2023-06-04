@@ -46,6 +46,7 @@ class Loader
         $link = getConfig('paths')['controllers_folder'] . $controller . ".php";
 
             // $this->load($m_link);
+            // var_dump($link);
           return  self::load($link);
 
         # code...
@@ -116,7 +117,7 @@ class Loader
     public static function loadAndInitialize($link,$data=null){
         if(self::load($link.'.php',$data=null)){
             $resource = Loader::resourceClassName($link);
-            return new $resource;
+            return new (str_replace('/','\\',$link));
         }else{
             return null;
         }
@@ -158,7 +159,7 @@ class Loader
      */
     public static function call($controller)
     {
-        return new $controller();
+        return self::loadAndInitialize(getConfig('paths')['controllers_folder'].$controller);
     }
 
     public static function resourceClassName($resourceLink){

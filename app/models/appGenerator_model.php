@@ -1,13 +1,15 @@
 <?php
-namespace app\model;
+namespace app\models;
 use system\core\Model;
 class appGenerator_model extends Model
 {
 
     public function __construct()
     {
+        // $this->setDb();
     }
     public function dbTables(){
+        
         $this->db->query('show tables');
         return $this->db->result();
     }

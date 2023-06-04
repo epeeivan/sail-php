@@ -1,4 +1,5 @@
 <?php
+namespace app\controllers;
 use system\core\Controller;
 class errorController extends Controller
 {
@@ -7,6 +8,9 @@ class errorController extends Controller
     }
     public function index(){
         $this->view('error');
+    }
+    public function test(){
+        echo"eee";
     }
 
 }

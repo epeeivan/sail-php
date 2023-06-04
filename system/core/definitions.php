@@ -7,3 +7,4 @@ $GLOBALS["lang"] = [];
 $GLOBALS["errors"] = [];
 $GLOBALS["routes"] = [];
 $GLOBALS["config"] = [];
+$GLOBALS["authorizations"] = [];

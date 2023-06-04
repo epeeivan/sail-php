@@ -6,7 +6,7 @@ use system\base\commons;
 use system\base\Crud;
 use system\base\dbsetter;
 
-class Model
+abstract class Model
 {
     protected $schema = array();
     protected $currentColumn = '';
