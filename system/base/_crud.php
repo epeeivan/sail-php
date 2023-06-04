@@ -27,14 +27,14 @@ trait Crud
         !is_null($columns)?
             $columnssString = implode(',',$columns):
             '';
-        $res = $this->db->select(isset($_GET["count"])?"count(*) as count":$columnssString)
-            ->from($this->getTable());
+        $res = self::$db->select(isset($_GET["count"])?"count(*) as count":$columnssString)
+            ->from(self::getTable());
         // conditional
-        (isset($_GET["id"]))?$res->where($this->getId(),$this->getIdValue()):null;
+        (isset($_GET["id"]))?$res->where(self::getId(),self::getIdValue()):null;
         (isset($_GET["date"]))?$res->where("CREATED_AT","%".$_GET["date"]."%"," like "):null;
         // end
 
-        $res->order_by($this->getId(),'desc');
+        $res->order_by(self::getId(),'desc');
         // conditional
         (isset($_GET["start"]) && isset($_GET["end"]))?$res->limit($_GET["start"],$_GET["end"]):null;
         // end
@@ -48,9 +48,9 @@ trait Crud
             $columnssString = implode(',',$columns):
             '';
         return
-            $this->db->select($columnssString)
-                ->from($this->getTable())
-                ->order_by($this->getId(),'desc')
+            self::$db->select($columnssString)
+                ->from(self::getTable())
+                ->order_by(self::getId(),'desc')
                 ->limit($start,$end)
                 ->get()
                 ->result();
@@ -61,8 +61,8 @@ trait Crud
      */
     public function count(){
         return
-            $this->db->select('count(*) as count')
-                ->from($this->getTable())
+            self::$db->select('count(*) as count')
+                ->from(self::getTable())
                 ->get()
                 ->single();
     }
@@ -78,10 +78,10 @@ trait Crud
             '*'
         );
         return
-            $this->db->select($columnsString)
-                ->from($this->getTable())
-                ->where($this->getId(),$this->getIdValue())
-                ->order_by($this->getId(),'desc')
+            self::$db->select($columnsString)
+                ->from(self::getTable())
+                ->where(self::getId(),self::getIdValue())
+                ->order_by(self::getId(),'desc')
                 ->get()
                 ->single();
     }
@@ -92,10 +92,10 @@ trait Crud
             '*'
         );
         return
-            $this->db->select($columnsString)
-                ->from($this->getTable())
-                ->where($column,$this->getColumnValue($column))
-                ->order_by($this->getId(),'desc')
+            self::$db->select($columnsString)
+                ->from(self::getTable())
+                ->where($column,self::getColumnValue($column))
+                ->order_by(self::getId(),'desc')
                 ->get()
                 ->result();
     }
@@ -104,11 +104,11 @@ trait Crud
      */
     public function add($includeId = false) {
         try {
-            $this->setFieldsFromRequest($includeId);
-            return $this->db->add($this->getTable());
+            self::setFieldsFromRequest($includeId);
+            return self::$db->add(self::getTable());
         }catch (PDOException $e){
 //            switch
-            $this->error = $this->handleError($e);
+            self::error = self::handleError($e);
         }
     }
 
@@ -117,12 +117,12 @@ trait Crud
      */
     public function update(){
         try {
-            $this->setFieldsFromRequest();
-            $this->db->where(strtolower($this->getId()), $this->getColumnValue($this->getId()));
-            return $this->db->update($this->getTable());
+            self::setFieldsFromRequest();
+            self::$db->where(strtolower(self::getId()), self::getColumnValue(self::getId()));
+            return self::$db->update(self::getTable());
         }catch (PDOException $e){
 //            switch
-            return $this->handleError($e);
+            return self::handleError($e);
         }
     }
 
@@ -130,9 +130,9 @@ trait Crud
      * @return void
      */
     public function delete(){
-        return $this->db->delete($this->getTable())
-            ->from($this->getTable())
-            ->where($this->getId(),$this->getIdValue())
+        return self::$db->delete(self::getTable())
+            ->from(self::getTable())
+            ->where(self::getId(),self::getIdValue())
             ->get()
             ->execute();
 
@@ -143,14 +143,14 @@ trait Crud
      */
     public function setFieldsFromRequest($includeId = false)
     {
-        foreach ($this->getschema() as $column => $value) {
+        foreach (self::getschema() as $column => $value) {
             //
-            if (!empty($this->getColumnValue($column))){
-                if (!$this->is_id($column) && $column!='table'&& !$includeId){
-                    $this->db->set(strtolower($column), $this->getColumnValue($column));
+            if (!empty(self::getColumnValue($column))){
+                if (!self::is_id($column) && $column!='table'&& !$includeId){
+                    self::$db->set(strtolower($column), self::getColumnValue($column));
                 }else{
                     if ($column!='table'&& $includeId){
-                        $this->db->set(strtolower($column), $this->getColumnValue($column));
+                        self::$db->set(strtolower($column), self::getColumnValue($column));
                     }
                 }
             }
@@ -163,10 +163,10 @@ trait Crud
      */
     public function setFieldsFromRequestWithoutID()
     {
-        foreach ($this->getschema() as $column => $value) {
+        foreach (self::getschema() as $column => $value) {
             //
-            if (!$this->is_id($column) && $column!='table'){
-                $this->db->set(strtolower($column), $this->getColumnValue($column));
+            if (!self::is_id($column) && $column!='table'){
+                self::$db->set(strtolower($column), self::getColumnValue($column));
             }
         }
     }
@@ -176,10 +176,10 @@ trait Crud
      */
     public function setFieldsFromRequestWithId()
     {
-        foreach ($this->getschema() as $column => $value) {
+        foreach (self::getschema() as $column => $value) {
             //
-            if (!$this->is_id($column) && $column!='table'){
-                $this->db->set(strtolower($column), $this->getColumnValue($column));
+            if (!self::is_id($column) && $column!='table'){
+                self::$db->set(strtolower($column), self::getColumnValue($column));
             }
         }
     }
