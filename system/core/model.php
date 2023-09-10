@@ -1,4 +1,5 @@
 <?php
+
 namespace system\core;
 
 
@@ -10,8 +11,8 @@ abstract class Model
 {
     protected $schema = array();
     protected $currentColumn = '';
-    use Crud;
     use dbsetter;
+    use Crud;
     use commons;
     public function __construct()
     {
@@ -21,8 +22,9 @@ abstract class Model
      * @param $table
      * @return void
      */
-    public function table($table = null){
-        if (!empty($table)){
+    public function table($table = null)
+    {
+        if (!empty($table)) {
             $this->schema['table'] = $table;
         }
     }
@@ -31,24 +33,26 @@ abstract class Model
      * @param $column
      * @return string
      */
-    public function getTable($column = null): string{
-        if (isset($this->schema['table'])){
-            if ($this->columnExist($column)){
-                return $this->schema['table'].'.'.$column;
-            }else{
+    public function getTable($column = null): string
+    {
+        if (isset($this->schema['table'])) {
+            if ($this->columnExist($column)) {
+                return $this->schema['table'] . '.' . $column;
+            } else {
                 return $this->schema['table'];
             }
         }
-        return'';
+        return '';
     }
 
     /**
      * @param $column
      * @return $this
      */
-    public function column($column = null){
-        if (!empty($column)){
-            $this->schema[$column] = array('name'=>$column);
+    public function column($column = null)
+    {
+        if (!empty($column)) {
+            $this->schema[$column] = array('name' => $column);
             $this->currentColumn = $column;
         }
         return $this;
@@ -59,8 +63,9 @@ abstract class Model
      * @param $value
      * @return void
      */
-    public function columnValue($column = null,$value = null){
-        if ($this->columnExist($column)){
+    public function columnValue($column = null, $value = null)
+    {
+        if ($this->columnExist($column)) {
             $this->schema[$column]['value'] = $value;
         }
     }
@@ -69,19 +74,31 @@ abstract class Model
      * @param $column
      * @return mixed|string
      */
-    public function getColumnValue($column = null){
-        if ($this->hasValue($column)){
+    public function getColumnValue($column = null)
+    {
+        if ($this->hasValue($column)) {
             return $this->schema[$column]['value'];
         }
         return '';
     }
 
     /**
+     * @param null $column
+     * 
+     * @return [type]
+     */
+    public function isColumnEmpty($column = null)
+    {
+        return in_array($this->getColumnValue($column), [null, ""]);
+    }
+
+    /**
      * @param $column
      * @return mixed|string
      */
-    public function getColumnSource($column = null){
-        if ($this->columnHasSource($column)){
+    public function getColumnSource($column = null)
+    {
+        if ($this->columnHasSource($column)) {
             return $this->schema[$column]['source'];
         }
         return '';
@@ -90,37 +107,41 @@ abstract class Model
     /**
      * @return array
      */
-    public function allTables(): Array{
+    public function allTables(): array
+    {
         $foreignTables = $this->foreignTables();
-        array_unshift($foreignTables,$this->getTable());
-        return $foreignTables ;
+        array_unshift($foreignTables, $this->getTable());
+        return $foreignTables;
     }
 
     /**
      * @return string
      */
-    public function allTablesString(): string{
-        return implode(',',$this->allTables());
+    public function allTablesString(): string
+    {
+        return implode(',', $this->allTables());
     }
 
     /**
      * @return array
      */
-    public function foreignTables(): Array{
+    public function foreignTables(): array
+    {
         $foreignTables = array();
 
-        foreach ($this->schema as $column => $value){
-            if($this->is_foreign($column)){
+        foreach ($this->schema as $column => $value) {
+            if ($this->is_foreign($column)) {
                 $foreignTables[] = $this->getColumn($column)['foreign'];
             }
         }
         return $foreignTables;
     }
-    public function foreignColumns(): Array{
+    public function foreignColumns(): array
+    {
         $foreignColumns = array();
 
-        foreach ($this->schema as $column => $value){
-            if($this->is_foreign($column)){
+        foreach ($this->schema as $column => $value) {
+            if ($this->is_foreign($column)) {
                 $foreignColumns[] = $this->getColumn($column);
             }
         }
@@ -131,8 +152,9 @@ abstract class Model
      * @param $key
      * @return array
      */
-    public function foreignColumn($key): Array{
-        if (isset($this->foreignColumns()[$key])){
+    public function foreignColumn($key): array
+    {
+        if (isset($this->foreignColumns()[$key])) {
             return $this->foreignColumns()[$key];
         }
         return array();
@@ -144,7 +166,7 @@ abstract class Model
      */
     public function columnHasSource($column = null): bool
     {
-        if ($this->columnExist($column)){
+        if ($this->columnExist($column)) {
             return isset($this->getColumn($column)['source']);
         }
         return false;
@@ -155,16 +177,17 @@ abstract class Model
      * @param $source
      * @return string|void
      */
-    public function foreignColumnLiteral($key, $source = false){
-        if (isset($this->foreignColumns()[$key])){
+    public function foreignColumnLiteral($key, $source = false)
+    {
+        if (isset($this->foreignColumns()[$key])) {
             $columnName = $this->foreignColumns()[$key]['name'];
-            if ($source){
-                if ($this->columnHasSource($columnName)){
-                    return $this->foreignTable($key).'.'. $this->getColumnSource($columnName);
-                }else{
-                    return $this->foreignTable($key).'.'. $columnName;
+            if ($source) {
+                if ($this->columnHasSource($columnName)) {
+                    return $this->foreignTable($key) . '.' . $this->getColumnSource($columnName);
+                } else {
+                    return $this->foreignTable($key) . '.' . $columnName;
                 }
-            }else{
+            } else {
                 return $this->getTable($columnName);
             }
         }
@@ -173,17 +196,19 @@ abstract class Model
     /**
      * @return string
      */
-    public function foreignTablesString(): string{
+    public function foreignTablesString(): string
+    {
 
-        return implode(',',$this->foreignTables());
+        return implode(',', $this->foreignTables());
     }
 
     /**
      * @param $key
      * @return string
      */
-    public function foreignTable($key): string{
-        if(isset($this->foreignTables()[$key])){
+    public function foreignTable($key): string
+    {
+        if (isset($this->foreignTables()[$key])) {
             return $this->foreignTables()[$key];
         }
         return '';
@@ -193,8 +218,9 @@ abstract class Model
      * @param $column
      * @return bool
      */
-    public function hasValue($column = null) :bool{
-        if ($this->columnExist($column)){
+    public function hasValue($column = null): bool
+    {
+        if ($this->columnExist($column)) {
             return isset($this->getColumn($column)['value']);
         }
         return false;
@@ -204,8 +230,9 @@ abstract class Model
      * @param $column
      * @return mixed|void
      */
-    public function getColumn($column = null){
-        if ($this->columnExist($column)){
+    public function getColumn($column = null)
+    {
+        if ($this->columnExist($column)) {
             return $this->schema[$column];
         }
     }
@@ -216,7 +243,7 @@ abstract class Model
      */
     public function columnExist($column = null): bool
     {
-        if (!empty($column) && isset($this->schema[$column])){
+        if (!empty($column) && isset($this->schema[$column])) {
             return true;
         }
         return false;
@@ -227,36 +254,41 @@ abstract class Model
      * @param $column
      * @return $this
      */
-    public function type($type, $column = null){
-        return $this->attribute($column, 'type',$type);
+    public function type($type, $column = null)
+    {
+        return $this->attribute($column, 'type', $type);
     }
 
     /**
      * @param $column
      * @return $this
      */
-    public function id($column = null){
-        return $this->attribute($column, 'id',true);
+    public function id($column = null)
+    {
+        return $this->attribute($column, 'id', true);
     }
 
     /**
      * @return int|string|void
      */
-    public function getId(){
-        foreach ($this->getSchema() as $column => $value){
-            if ($this->is_id($column)){
+    public function getId()
+    {
+        foreach ($this->getSchema() as $column => $value) {
+            if ($this->is_id($column)) {
                 return $column;
             }
         }
     }
-    public function setId($value){
-        $this->columnValue($this->getId(),$value);
+    public function setId($value)
+    {
+        $this->columnValue($this->getId(), $value);
     }
 
     /**
      * @return mixed|string
      */
-    public function getIdValue(){
+    public function getIdValue()
+    {
         return $this->getColumnValue($this->getId());
     }
 
@@ -265,8 +297,9 @@ abstract class Model
      * @param $column
      * @return $this
      */
-    public function foreign($source,$column = null){
-        return $this->attribute($column, 'foreign',$source);
+    public function foreign($source, $column = null)
+    {
+        return $this->attribute($column, 'foreign', $source);
     }
 
     /**
@@ -274,15 +307,17 @@ abstract class Model
      * @param $column
      * @return $this
      */
-    public function source($source,$column = null){
-        return $this->attribute($column, 'source',$source);
+    public function source($source, $column = null)
+    {
+        return $this->attribute($column, 'source', $source);
     }
 
     /**
      * @param $column
      * @return bool
      */
-    public function is_id($column = null): bool{
+    public function is_id($column = null): bool
+    {
         return $this->is_($column, 'id');
     }
 
@@ -290,7 +325,8 @@ abstract class Model
      * @param $column
      * @return bool
      */
-    public function is_foreign($column = null): bool{
+    public function is_foreign($column = null): bool
+    {
         return $this->is_($column, 'foreign');
     }
 
@@ -299,8 +335,9 @@ abstract class Model
      * @param $type
      * @return bool
      */
-    public function is_($column = null, $type): bool{
-        if ($this->columnExist($column)){
+    public function is_($column = null, $type): bool
+    {
+        if ($this->columnExist($column)) {
             return isset($this->getColumn($column)[$type]);
         }
         return false;
@@ -315,12 +352,12 @@ abstract class Model
     public function attribute($column = null, $attribute = null, $value): Model
     {
         //
-        if (empty($this->currentColumn)){
+        if (empty($this->currentColumn)) {
             //
-            if ($this->columnExist($column)){
+            if ($this->columnExist($column)) {
                 $this->schema[$column][$attribute] = $value;
             }
-        }else{
+        } else {
             //
             $this->schema[$this->currentColumn][$attribute] = $value;
         }
@@ -333,5 +370,4 @@ abstract class Model
     {
         return $this->schema;
     }
-
 }

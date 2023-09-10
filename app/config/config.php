@@ -13,7 +13,7 @@ setConfig([
     [
         "host"=>"localhost",
         "pass"=>"",
-        "dbname"=>"sail-php",
+        "dbname"=>"uac",
         "user"=>"root",
 
     ],

@@ -1,5 +1,8 @@
 <?php
+
 namespace system\base;
+
+use PDOException;
 
 /**
  * groups together a set of generic
@@ -13,7 +16,7 @@ namespace system\base;
  * @author beis
  * @link
  */
-trait Crud
+trait   Crud
 {
     /**
      * @param array|null $columns
@@ -22,120 +25,131 @@ trait Crud
     public $error = [];
 
 
-    public static function get(Array $columns = null){
+    public function get(array $columns = null, $request = null)
+    {
+
         $columnssString = '*';
-        !is_null($columns)?
-            $columnssString = implode(',',$columns):
+        !is_null($columns) ?
+            $columnssString = implode(',', $columns) :
             '';
-        $res = self::$db->select(isset($_GET["count"])?"count(*) as count":$columnssString)
-            ->from(self::getTable());
+
+        // var_dump(self::$db);
+        $res = $this->db->select(isset($request["count"]) ? "count(*) as count" : $columnssString)
+            ->from($this->getTable());
         // conditional
-        (isset($_GET["id"]))?$res->where(self::getId(),self::getIdValue()):null;
-        (isset($_GET["date"]))?$res->where("CREATED_AT","%".$_GET["date"]."%"," like "):null;
+        (isset($request["id"])) ? $res->where($this->getId(), $request["id"]) : null;
+        (isset($request["date"])) ? $res->where("CREATED_AT", "%" . $request["date"] . "%", " like ") : null;
         // end
 
-        $res->order_by(self::getId(),'desc');
+        $res->order_by($this->getId(), 'desc');
         // conditional
-        (isset($_GET["start"]) && isset($_GET["end"]))?$res->limit($_GET["start"],$_GET["end"]):null;
+        (isset($request["start"]) && isset($request["end"])) ? $res->limit($_GET["start"], $_GET["end"]) : null;
         // end
         $res->get();
-        return isset($_GET["count"])?$res->single()["count"]:(isset($_GET["id"])?$res->single():$res->result());
+        return isset($request["count"]) ? $res->single()["count"] : (isset($request["id"]) ? $res->single() : $res->result());
     }
 
-    public function getWithLimit($start = 0,$end = 10,Array $columns = null){
+    public function getWithLimit($start = 0, $end = 10, array $columns = null)
+    {
         $columnssString = '*';
-        !is_null($columns)?
-            $columnssString = implode(',',$columns):
+        !is_null($columns) ?
+            $columnssString = implode(',', $columns) :
             '';
         return
-            self::$db->select($columnssString)
-                ->from(self::getTable())
-                ->order_by(self::getId(),'desc')
-                ->limit($start,$end)
-                ->get()
-                ->result();
+            $this->db->select($columnssString)
+            ->from($this->getTable())
+            ->order_by($this->getId(), 'desc')
+            ->limit($start, $end)
+            ->get()
+            ->result();
     }
 
     /**
      * @return mixed
      */
-    public function count(){
+    public function count()
+    {
         return
-            self::$db->select('count(*) as count')
-                ->from(self::getTable())
-                ->get()
-                ->single();
+            $this->db->select('count(*) as count')
+            ->from($this->getTable())
+            ->get()
+            ->single();
     }
 
     /**
      * @param array|null $columns
      * @return mixed
      */
-    public function getWhereId(Array $columns = null){
-        $columnsString = (
-            !is_null($columns)?
-            implode(',',$columns):
+    public function getWhereId(array $columns = null)
+    {
+        $columnsString = (!is_null($columns) ?
+            implode(',', $columns) :
             '*'
         );
         return
-            self::$db->select($columnsString)
-                ->from(self::getTable())
-                ->where(self::getId(),self::getIdValue())
-                ->order_by(self::getId(),'desc')
-                ->get()
-                ->single();
+            $this->db->select($columnsString)
+            ->from($this->getTable())
+            ->where($this->getId(), $this->getIdValue())
+            ->order_by($this->getId(), 'desc')
+            ->get()
+            ->single();
     }
-    public function getWhereColumn(String $column, Array $columns = null){
-        $columnsString = (
-        is_null($columns)?
-            implode(',',$columns):
+    public function getWhereColumn(String $column, array $columns = null)
+    {
+        $columnsString = (is_null($columns) ?
+            implode(',', $columns) :
             '*'
         );
         return
-            self::$db->select($columnsString)
-                ->from(self::getTable())
-                ->where($column,self::getColumnValue($column))
-                ->order_by(self::getId(),'desc')
-                ->get()
-                ->result();
+            $this->db->select($columnsString)
+            ->from($this->getTable())
+            ->where($column, $this->getColumnValue($column))
+            ->order_by($this->getId(), 'desc')
+            ->get()
+            ->result();
     }
     /**
      * @return void
      */
-    public function add($includeId = false) {
+    public function add($includeId = false)
+    {
         try {
-            self::setFieldsFromRequest($includeId);
-            return self::$db->add(self::getTable());
-        }catch (PDOException $e){
-//            switch
-            self::error = self::handleError($e);
+            $this->setFieldsFromRequest($includeId);
+            $this->db->set("created_at", date("Y-m-d H:i:s"));
+            return $this->db->add($this->getTable());
+        } catch (PDOException $e) {
+            //            switch
+            $this->error = $this->handleError($e);
         }
     }
 
     /**
      * @return void
      */
-    public function update(){
+    public function update()
+    {
         try {
-            self::setFieldsFromRequest();
-            self::$db->where(strtolower(self::getId()), self::getColumnValue(self::getId()));
-            return self::$db->update(self::getTable());
-        }catch (PDOException $e){
-//            switch
-            return self::handleError($e);
+            $this->setFieldsFromRequest();
+            $this->db->set("updated_at", date("Y-m-d H:i:s"));
+
+            $this->db->where(strtolower($this->getId()), $this->getColumnValue($this->getId()));
+            return $this->db->update($this->getTable());
+        } catch (PDOException $e) {
+            //            switch
+            return $this->handleError($e);
         }
     }
 
     /**
      * @return void
      */
-    public function delete(){
-        return self::$db->delete(self::getTable())
-            ->from(self::getTable())
-            ->where(self::getId(),self::getIdValue())
+    public function delete()
+    {
+        return $this->db->delete($this->getTable())
+            ->from($this->getTable())
+            ->where($this->getId(), $this->getIdValue())
             ->get()
             ->execute();
-
     }
 
     /**
@@ -143,18 +157,17 @@ trait Crud
      */
     public function setFieldsFromRequest($includeId = false)
     {
-        foreach (self::getschema() as $column => $value) {
+        foreach ($this->getschema() as $column => $value) {
             //
-            if (!empty(self::getColumnValue($column))){
-                if (!self::is_id($column) && $column!='table'&& !$includeId){
-                    self::$db->set(strtolower($column), self::getColumnValue($column));
-                }else{
-                    if ($column!='table'&& $includeId){
-                        self::$db->set(strtolower($column), self::getColumnValue($column));
+            if (!empty($this->getColumnValue($column))) {
+                if (!$this->is_id($column) && $column != 'table' && !$includeId) {
+                    $this->db->set(strtolower($column), $this->getColumnValue($column));
+                } else {
+                    if ($column != 'table' && $includeId) {
+                        $this->db->set(strtolower($column), $this->getColumnValue($column));
                     }
                 }
             }
-
         }
     }
 
@@ -163,10 +176,10 @@ trait Crud
      */
     public function setFieldsFromRequestWithoutID()
     {
-        foreach (self::getschema() as $column => $value) {
+        foreach ($this->getschema() as $column => $value) {
             //
-            if (!self::is_id($column) && $column!='table'){
-                self::$db->set(strtolower($column), self::getColumnValue($column));
+            if (!$this->is_id($column) && $column != 'table') {
+                $this->db->set(strtolower($column), $this->getColumnValue($column));
             }
         }
     }
@@ -176,28 +189,27 @@ trait Crud
      */
     public function setFieldsFromRequestWithId()
     {
-        foreach (self::getschema() as $column => $value) {
+        foreach ($this->getschema() as $column => $value) {
             //
-            if (!self::is_id($column) && $column!='table'){
-                self::$db->set(strtolower($column), self::getColumnValue($column));
+            if (!$this->is_id($column) && $column != 'table') {
+                $this->db->set(strtolower($column), $this->getColumnValue($column));
             }
         }
     }
 
-    public function handleError($e){
+    public function handleError($e)
+    {
         $infos = [];
-        switch ($e->getCode()){
+        switch ($e->getCode()) {
             case 23000:
-                $infos = explode("'",$e->getMessage());
+                $infos = explode("'", $e->getMessage());
                 $column = lang($infos[3]);
-                $infos = ["table"=>$infos[1],"column"=>$infos[3],"message"=>lang("db_column_value_exist",["column"=>$column])];
+                $infos = ["table" => $infos[1], "column" => $infos[3], "message" => lang("db_column_value_exist", ["column" => $column])];
                 break;
             default:
                 echo $e->getMessage();
                 break;
-
         }
         return $infos;
     }
-
 }

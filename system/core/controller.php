@@ -3,10 +3,11 @@
 namespace system\core;
 
 use system\Loader;
-use system\base\Database;
+use system\base\dbsetter;
 
 class Controller
 {
+    use dbsetter;
     protected $base_model = null;
     public function __construct()
     {
@@ -62,7 +63,6 @@ class Controller
             $valName = Loader::resourceClassName($validation);
             $this->$valName = Loader::validation($validation);
         }
-
     }
 
     /**
@@ -70,15 +70,17 @@ class Controller
      * @param $is_base
      * @return void
      */
-    public function model($mod, $is_base = false)
+    public function model($mod, $is_base = false, $options = null)
     {
 
         $modName = Loader::resourceClassName($mod);
-        $schemaName = $modName . "_schema";
-        $schemaFileName = (getConfig('paths')['schemas_folder'] . $modName) . "_schema" . ".php";
-        if (file_exists($schemaFileName)) {
-            Loader::schema($schemaName);
-        }
+        $schemaName =  ($options["schema_path"] ?? "") . $modName . "_schema";
+        // $schemaFileName = (getConfig('paths')['schemas_folder'] . ($options["schema_path"] ?? "") . $modName) . "_schema" . ".php";
+        // var_dump($mod);
+        // var_dump(file_exists($schemaFileName));
+
+        Loader::schema($schemaName);
+
 
         if ($is_base) {
             $this->base_model = Loader::model($mod);
@@ -116,6 +118,10 @@ class Controller
             $response['url'] = $url : '';
         isset($message) ?
             $response['message'] = $message : '';
+
+        if (!empty(getErrors())) {
+            $response["errors"] = getErrors();
+        }
 
 
         echo $this->safe_json_encode($response);

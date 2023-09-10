@@ -54,6 +54,13 @@ class Session
     {
         return $_SESSION[$key];
     }
+    /**
+     * 
+     */
+    public static function exist($key = '')
+    {
+        return isset($_SESSION[$key]);
+    }
 
     /**
      * @param $key
@@ -109,9 +116,8 @@ class Session
                         $db->where("session_id", session_id());
                         $db->update("session");
                     }
-                }else{
+                } else {
                     throw new Error("Session table does'nt exist", 1);
-                    
                 }
 
                 break;

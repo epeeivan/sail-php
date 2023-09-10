@@ -9,12 +9,16 @@ trait dbsetter
 {
 	protected $db = null;
 
-	public function setDb()
+	public function setDb(Database $db = null)
 	{
-		try{
-			$this->db = new Database();
-		}catch(PDOException $e){
-			echo $e->getCode();
+		if (is_null($db)) {
+			try {
+				$this->db = new Database();
+			} catch (PDOException $e) {
+				echo $e->getCode();
+			}
+		} else {
+			$this->db = $db;
 		}
 	}
 	public function getDb()

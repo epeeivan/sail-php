@@ -3,6 +3,7 @@
 /**
  *
  */
+
 namespace system;
 
 use Exception;
@@ -31,8 +32,6 @@ class Loader
         self::load("app/config/config.php");
         self::load("app/routes/routes.php");
         self::loadPrimary();
-
-
     }
 
     /**
@@ -45,9 +44,9 @@ class Loader
         // $m_link = $this->models_folder . $controller . ".php";
         $link = getConfig('paths')['controllers_folder'] . $controller . ".php";
 
-            // $this->load($m_link);
-            // var_dump($link);
-          return  self::load($link);
+        // $this->load($m_link);
+        // var_dump($link);
+        return  self::load($link);
 
         # code...
     }
@@ -59,7 +58,7 @@ class Loader
     public static function library($lib)
     {
         # code...
-        return self::loadAndInitialize(getConfig('paths')['libraries_folder'].$lib);
+        return self::loadAndInitialize(getConfig('paths')['libraries_folder'] . $lib);
     }
 
     /**
@@ -69,12 +68,12 @@ class Loader
     public static function model($mod)
     {
         # code...
-        return self::loadAndInitialize(getConfig('paths')['models_folder'].$mod);
+        return self::loadAndInitialize(getConfig('paths')['models_folder'] . $mod);
     }
     public static function schema($schema): bool
     {
         # code...
-        return self::load(getConfig('paths')['schemas_folder'].$schema.".php");
+        return self::load(getConfig('paths')['schemas_folder'] . $schema . ".php");
     }
 
     /**
@@ -84,7 +83,7 @@ class Loader
     public static function validation($val)
     {
         # code...
-        return self::loadAndInitialize(getConfig('paths')['validations_folder'].$val);
+        return self::loadAndInitialize(getConfig('paths')['validations_folder'] . $val);
     }
 
     /**
@@ -93,9 +92,11 @@ class Loader
      * @return void
      */
 
-    public static function view($view,$data = null){
+    public static function view($view, $data = null)
+    {
+        
         #code
-        self::load(getConfig('paths')['views_folder'].$view.".php",$data);
+        self::load(getConfig('paths')['views_folder'] . $view . ".php", $data);
     }
 
     /**
@@ -103,10 +104,11 @@ class Loader
      * @param $data
      * @return void
      */
-    public static function lang($languageFile,$data = null){
+    public static function lang($languageFile, $data = null)
+    {
         #code
-//        var_dump($_COOKIE["mpf_lang"]);
-        self::load(getConfig('paths')['languages_folder'].($_COOKIE["mpf_lang"] ?? getConfig('language'))."/".$languageFile.".php",$data);
+        //        var_dump($_COOKIE["mpf_lang"]);
+        self::load(getConfig('paths')['languages_folder'] . ($_COOKIE["mpf_lang"] ?? getConfig('language')) . "/" . $languageFile . ".php", $data);
     }
 
     /**
@@ -114,11 +116,12 @@ class Loader
      * @param $data
      * @return mixed|null
      */
-    public static function loadAndInitialize($link,$data=null){
-        if(self::load($link.'.php',$data=null)){
+    public static function loadAndInitialize($link, $data = null)
+    {
+        if (self::load($link . '.php', $data = null)) {
             $resource = Loader::resourceClassName($link);
-            return new (str_replace('/','\\',$link));
-        }else{
+            return new (str_replace('/', '\\', $link));
+        } else {
             return null;
         }
     }
@@ -127,30 +130,28 @@ class Loader
      * @param $data
      * @return bool
      */
-    public static function load($link,$data=null)
+    public static function load($link, $data = null)
     {
         # code...
-        
-            //code...
-            if (!file_exists($link) /*|| !file_exists($m_link)*/ ) {
+
+        //code...
+        if (!file_exists($link) /*|| !file_exists($m_link)*/) {
+            # code...
+            throw new Exception("Error Processing Request", 1);
+
+            return false;
+        } else {
+            // $this->load($m_link);
+            if (!is_null($data)) {
                 # code...
-                throw new Exception("Error Processing Request", 1);
-                
-                return false;
-            } else {
-                // $this->load($m_link);
-                if (!is_null($data)) {
+                foreach ($data as $key => $value) {
                     # code...
-                    foreach ($data as $key => $value) {
-                        # code...
-                        $$key=$value;
-                    }
+                    $$key = $value;
                 }
-               require $link;
-                return true;
             }
-
-
+            require $link;
+            return true;
+        }
     }
 
     /**
@@ -159,11 +160,12 @@ class Loader
      */
     public static function call($controller)
     {
-        return self::loadAndInitialize(getConfig('paths')['controllers_folder'].$controller);
+        return self::loadAndInitialize(getConfig('paths')['controllers_folder'] . $controller);
     }
 
-    public static function resourceClassName($resourceLink){
-        return explode("/",$resourceLink)[count(explode("/",$resourceLink))-1];
+    public static function resourceClassName($resourceLink)
+    {
+        return explode("/", $resourceLink)[count(explode("/", $resourceLink)) - 1];
     }
     /**
      * @param $ressource
@@ -180,24 +182,24 @@ class Loader
      * @param array|null $exclude
      * @return void
      */
-    public static function getFolderContent($folder, array $exclude = null,array $include = null)
+    public static function getFolderContent($folder, array $exclude = null, array $include = null)
     {
         # code...
         $dirname = $folder;
         $dir = opendir($dirname);
         while ($file = readdir($dir)) {
-            if (($file != '.' && $file != '..') && !is_dir($dirname .'/'. $file)) {
+            if (($file != '.' && $file != '..') && !is_dir($dirname . '/' . $file)) {
 
-                if (isset($include)){
+                if (isset($include)) {
 
                     foreach ($include as $key => $value) {
 
-                        $res = explode($value,$file);
-                        if (count($res)>1){
-                            require $dirname.'/'.$file;
+                        $res = explode($value, $file);
+                        if (count($res) > 1) {
+                            require $dirname . '/' . $file;
                         }
                     }
-                }else{
+                } else {
                     if ($exclude != null) {
                         # code...
                         // searching for exclude file
@@ -212,18 +214,18 @@ class Loader
                         require '' . $dirname . '/' . $file . '';
                     }
                 }
-            }else{
-                if ($file != '.' && $file != '..' &&  is_dir($dirname .'/'. $file)){
+            } else {
+                if ($file != '.' && $file != '..' &&  is_dir($dirname . '/' . $file)) {
                     //echo $dirname .'/'. $file;
-                    self::getFolderContent($dirname .'/'. $file,$exclude,$include);
+                    self::getFolderContent($dirname . '/' . $file, $exclude, $include);
                 }
             }
         }
 
         closedir($dir);
     }
-    private static function loadPrimary(){
-        self::getFolderContent(getConfig('paths')['controllers_folder'],[],['primary']);
+    private static function loadPrimary()
+    {
+        self::getFolderContent(getConfig('paths')['controllers_folder'], [], ['primary']);
     }
 }
-

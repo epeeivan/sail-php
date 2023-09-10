@@ -24,6 +24,21 @@ if (!function_exists("lang")) {
     }
 }
 
+if (!function_exists("is_date")) {
+    function is_date($value)
+    {
+        if (!$value) {
+            return false;
+        }
+
+        try {
+            new \DateTime($value);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+}
 
 if (!function_exists("setErrors")) {
     /**
@@ -36,23 +51,42 @@ if (!function_exists("setErrors")) {
     }
 }
 
+if (!function_exists("getRandomStringUniqid")) {
+    /**
+     *
+     * Using uniqid().
+     *
+     * @param int $length
+     * @return string
+     */
+    function getRandomStringUniqid($length = 16)
+    {
+        $string = uniqid(rand());
+        $randomString = substr($string, 0, $length);
+        return $randomString;
+    }
+}
 
 if (!function_exists("getErrors")) {
     /**
      * @param $label
      * @return string
      */
-    function getErrors($label)
+    function getErrors($label = null)
     {
-        $ret = "";
-        if (isset($GLOBALS["errors"][$label])) {
-            if (is_array($GLOBALS["errors"][$label]) && !empty(is_array($GLOBALS["errors"][$label]))) {
-                foreach ($GLOBALS["errors"][$label] as $key => $error) {
-                    $ret .= $error . " ";
+        if (isset($label)) {
+            $ret = "";
+            if (isset($GLOBALS["errors"][$label])) {
+                if (is_array($GLOBALS["errors"][$label]) && !empty(is_array($GLOBALS["errors"][$label]))) {
+                    foreach ($GLOBALS["errors"][$label] as $key => $error) {
+                        $ret .= $error . " ";
+                    }
                 }
             }
+            return $ret;
+        } else {
+            return $GLOBALS["errors"];
         }
-        return $ret;
     }
 }
 
@@ -74,7 +108,7 @@ if (!function_exists("url")) {
      */
     function url(string $url = ""): string
     {
-        return (isset($_SERVER["REQUEST_SCHEME"]) ? $GLOBALS["config"]["base_url"] : "http://" . $_SERVER["HTTP_HOST"] . "/" ) . $url;
+        return (isset($_SERVER["REQUEST_SCHEME"]) ? $GLOBALS["config"]["base_url"] : "http://" . $_SERVER["HTTP_HOST"] . "/") . $url;
     }
 }
 
@@ -184,7 +218,7 @@ if (!function_exists("getUrlRoute")) {
             ) :
             explode("/", $_SERVER['REQUEST_URI'] . "/");
 
-        return implode("/",array_filter($urlRoute));
+        return implode("/", array_filter($urlRoute));
         //
         //    echo $_SERVER['REQUEST_URI']."/";
         //    echo $urlRoute[1]."222";

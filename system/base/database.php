@@ -204,13 +204,14 @@ class Database
         return $this;
     }
 
+
     /**
      * @param $attribute
      * @param $value
      * @return array|string|string[]
      */
     private function formatAndSetAttr($attribute, $value){
-        $at = str_replace(['.',','],'',$attribute);
+        $at = str_replace(['.',',','*','/','-','+'],'',$attribute);
         $this->set($at,$value,"cond");
         return $at;
     }
