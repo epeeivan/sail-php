@@ -25,7 +25,7 @@ class action extends primaryApi
 		$this->genAdd("action_model", "vAction");
 	}
 	public function update()
-	{
+	{  
 		$this->genUpdate("action_model", "vAction");
 	}
 	public function delete()
