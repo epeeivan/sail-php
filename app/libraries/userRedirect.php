@@ -9,19 +9,22 @@ class userRedirect
     public function __construct()
     {
     }
+    /**
+     * @return [type]
+     */
     public function isConnected()
     {
         return Session::exist("user");
     }
-    public function isStudent()
+    public function isTechnician()
     {
         return $this->identificateUserType(1);
     }
-    public function isTeacher()
+    public function isAdmin()
     {
         return $this->identificateUserType(2);
     }
-    public function isAdmin()
+    public function isCustomer()
     {
         return $this->identificateUserType(4);
     }

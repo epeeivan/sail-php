@@ -24,7 +24,7 @@ class notify_model extends Model
 		!$this->isColumnEmpty("USER_ID") ? $res->and($this->foreignColumnLiteral(1), $this->getColumnValue("USER_ID")) : null;
 		(isset($request["start"]) && isset($request["end"])) ? $res->limit($request["start"], $request["end"]) : null;
 		$res->get();
-		return isset($request["count"]) ? $res->single()["count"] : (isset($request["id"]) ? $res->single() : $res->result());
+		return isset($request["count"]) ? $res->single()["count"] : (!$this->isColumnEmpty("USER_ID") ? $res->single() : $res->result());
 	}
 	public function getNotificationUsers()
 	{

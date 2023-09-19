@@ -26,15 +26,13 @@ class role extends primaryApi
 	 */
 	public function get()
 	{
-		$this->responseJson($this->role_model->get());
+		$this->responseJson($this->role_model->get(null, $_GET));
 	}
 	/**
 	 * @return [type]
 	 */
 	public function add()
 	{
-		var_dump("ff");
-
 		if ($this->vRole->run()) {
 			var_dump("ff");
 			$this->role_model->hydrater($_POST);
@@ -49,15 +47,12 @@ class role extends primaryApi
 	}
 	public function update()
 	{
-		if ($this->vRole->run()) {
-			$this->role_model->hydrater($_POST);
-			if ($this->role_model->update()) {
-				$this->responseJson($_POST);
-			} else {
-				$this->responseJson();
-			}
+		// if ($this->vRole->run()) {
+		$this->role_model->hydrater($_POST);
+		if ($this->role_model->update()) {
+			$this->responseJson($_POST);
 		} else {
-			$this->responseJson(null, lang("fields_empty"));
+			$this->responseJson();
 		}
 	}
 	public function delete()

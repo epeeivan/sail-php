@@ -1,9 +1,12 @@
 <?php
+
 namespace system\base;
+
 use PDO;
-    /**
-     *
-     */
+
+/**
+ *
+ */
 class Database
 {
     /**
@@ -87,7 +90,8 @@ class Database
     /**
      * @return string
      */
-    public function getRequest(){
+    public function getRequest()
+    {
         return $this->request;
     }
 
@@ -137,8 +141,8 @@ class Database
     public function from($table)
     {
         $tableString = $table;
-        if (is_array($table) && !empty($table)){
-            $tableString = implode(',',$table);
+        if (is_array($table) && !empty($table)) {
+            $tableString = implode(',', $table);
         }
         $this->request .= " from " . $tableString;
         return $this;
@@ -150,10 +154,10 @@ class Database
      * @param $operator
      * @return $this
      */
-    public function where($attribute, $value,$operator = "=")
+    public function where($attribute, $value, $operator = "=")
     {
         $at = $this->formatAndSetAttr($attribute, $value);
-        $this->request .= " where " . $attribute . $operator . ":".$at;
+        $this->request .= " where " . $attribute . $operator . ":" . $at;
         return $this;
     }
 
@@ -163,10 +167,10 @@ class Database
      * @param $value
      * @return $this
      */
-    public function join($attribute, $value){
-        $this->request.= " where " . $attribute ." = ".$value;
+    public function join($attribute, $value)
+    {
+        $this->request .= " where " . $attribute . " = " . $value;
         return $this;
-
     }
 
     /**
@@ -174,10 +178,10 @@ class Database
      * @param $value
      * @return $this
      */
-    public function and_join($attribute, $value){
-        $this->request.= " and " . $attribute ." = ".$value;
+    public function and_join($attribute, $value)
+    {
+        $this->request .= " and " . $attribute . " = " . $value;
         return $this;
-
     }
 
     /**
@@ -187,7 +191,7 @@ class Database
      */
     public function where_not($attribute, $value)
     {
-        $this->set($attribute,$value,"cond");
+        $this->set($attribute, $value, "cond");
         $this->request .= " where " . $attribute . "!=:" . $attribute;
         return $this;
     }
@@ -197,9 +201,11 @@ class Database
      * @param $value
      * @return $this
      */
-    function  and ($attribute, $value,$operator="=") {
+    function  and($attribute, $value, $operator = "=")
+    {
+
         $at = $this->formatAndSetAttr($attribute, $value);
-        $this->request .= " and " . $attribute . $operator . ":".$at;
+        $this->request .= " and " . $attribute . $operator . ":" . $at;
 
         return $this;
     }
@@ -210,9 +216,13 @@ class Database
      * @param $value
      * @return array|string|string[]
      */
-    private function formatAndSetAttr($attribute, $value){
-        $at = str_replace(['.',',','*','/','-','+'],'',$attribute);
-        $this->set($at,$value,"cond");
+    private function formatAndSetAttr($attribute, $value)
+    {
+        $at = str_replace(['.', ',', '*', '/', '-', '+'], '', $attribute);
+        // $this->get;
+        $at .= isset($this->attributes[$at]) ? count($this->attributes) : "";
+
+        $this->set($at, $value, "cond");
         return $at;
     }
 
@@ -244,9 +254,10 @@ class Database
      * @param $value
      * @return $this
      */
-    function  or ($attribute, $value,$operator = "=") {
+    function  or($attribute, $value, $operator = "=")
+    {
         $at = $this->formatAndSetAttr($attribute, $value);
-        $this->request .= " or " . $attribute . $operator.":" . $at;
+        $this->request .= " or " . $attribute . $operator . ":" . $at;
         return $this;
     }
 
@@ -277,7 +288,7 @@ class Database
      * @param $type
      * @return void
      */
-    public function set($attribute, $value,$type = null)
+    public function set($attribute, $value, $type = null)
     {
         # code...
         $this->attributes[$attribute]["value"] = $value;
@@ -291,7 +302,8 @@ class Database
      * @param $attribute
      * @return void
      */
-    public function unset($attribute){
+    public function unset($attribute)
+    {
         $this->unset($this->attributes[$attribute]);
     }
 
@@ -301,12 +313,12 @@ class Database
      */
     public function add($tablename)
     {
-        $attrs= [];
+        $attrs = [];
         foreach ($this->attributes  as $key => $value) {
             # code...
             if (!isset($value["type"])) {
                 # code...
-                array_push($attrs,$key);
+                array_push($attrs, $key);
             }
         }
         // echo 'insert into ' . $tablename . ' (' . implode(',', $attrs) . ') values (:' . implode(',:', $attrs) . ')</br>';
@@ -330,13 +342,13 @@ class Database
             # code...
             if (!isset($datas["type"])) {
                 # code...
-                $sets .= $attribute . ' =:' . $attribute . ',';                
+                $sets .= $attribute . ' =:' . $attribute . ',';
             }
         }
-        $sets = substr($sets,0,strlen($sets)-1);
+        $sets = substr($sets, 0, strlen($sets) - 1);
         $this->request = 'update ' . $tablename . ' set ' . $sets . $this->request;
-//         echo $this->request;
-       $this->stmt = $this->dbh->prepare($this->request);
+        //         echo $this->request;
+        $this->stmt = $this->dbh->prepare($this->request);
 
         return $this->execute();
     }
@@ -405,7 +417,7 @@ class Database
         if (!empty($this->attributes)) {
             foreach ($this->attributes as $attribute => $datas) {
                 # code...
-                $this->bind(":".$attribute, $datas["value"]);
+                $this->bind(":" . $attribute, $datas["value"]);
             }
             $this->reset();
         }
@@ -479,5 +491,3 @@ class Database
         return $this->stmt->debugDumpParams();
     }
 }
-
-?>

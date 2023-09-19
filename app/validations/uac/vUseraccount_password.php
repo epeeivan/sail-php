@@ -14,7 +14,6 @@ class vUseraccount_password extends Validation
 				'old_password' => 'varchar|max_length(255)',
 				'password' => 'varchar|max_length(500)',
 				'confirm_password' => 'varchar|max_length(500)|matches[password]',
-
 			]
 		);
 	}

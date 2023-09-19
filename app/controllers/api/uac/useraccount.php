@@ -55,7 +55,8 @@ class useraccount extends primaryApi
 	 */
 	public function get()
 	{
-		$this->responseJson($this->useraccount_model->get(null,$_GET));
+		$this->useraccount_model->hydrater($_GET);
+		$this->responseJson($this->useraccount_model->get(null, $_GET));
 	}
 	/**
 	 * @return [type]
@@ -112,11 +113,13 @@ class useraccount extends primaryApi
 	}
 	public function changePassword()
 	{
-		$this->validation("vUseraccount_password");
+		$this->validation("uac/vUseraccount_password");
 
 		if ($this->vUseraccount_password->run()) {
 			$this->useraccount_model->hydrater($_POST);
-			$user = $this->useraccount_model->get(null, ["id" => $_POST["user_id"]]);
+			$this->useraccount_model->hydrater(["user_id" => $_POST["id"]]);
+			// var_dump($this->useraccount_model->get(null, $_GET));
+			$user = $this->useraccount_model->get(null, $_GET);
 			if (!empty($user)) {
 				if ($user["PASSWORD"] == md5($_POST["old_password"])) {
 					if ($user["PASSWORD"] != md5($_POST["password"])) {
@@ -167,25 +170,23 @@ class useraccount extends primaryApi
 	private function connectInSession($profile = null)
 	{
 		$this->useraccount_role_model->hydrater(["USER_ID" => $profile["USER_ID"]]);
-		$this->belong_model->hydrater(["USER_ID" => $profile["USER_ID"]]);
 		// 
 		$urlToRedirect = "dashboard/schoolSelect";
 		$roles = $this->useraccount_role_model->getUserRoles();
-		$esth = $this->belong_model->getUserEsthablishments([]);
 		$config = $this->useraccount_configuration_model->get(null, ["user_id" => $profile["USER_ID"]]);
 		// 
 		$session_datas = ["profile" => $profile, "roles" => $roles];
 		!empty($config) ? $session_datas["config"] = $config : null;
 		// 
-		if (!empty($esth) && is_array($esth)) {
-			if (count($esth) > 1) {
-				# code...
-				$session_datas["esth"] = $esth;
-			} else {
-				$session_datas["current_esth"] = $esth[0];
-				$urlToRedirect = "dashbaord";
-			}
-		}
+		// if (!empty($esth) && is_array($esth)) {
+		// 	if (count($esth) > 1) {
+		// 		# code...
+		// 		$session_datas["esth"] = $esth;
+		// 	} else {
+		// 		$session_datas["current_esth"] = $esth[0];
+		// 		$urlToRedirect = "dashbaord";
+		// 	}
+		// }
 		Session::set("user", $session_datas);
 		return $urlToRedirect;
 	}
