@@ -2,7 +2,7 @@
 use system\core\Router;
 use system\Loader;
 
-Router::setRoute('default','','frontend');
+Router::setRoute('default','','defaultController');
 Router::setRoute('default/([a-z]+)','','defaultController/${1}');
 Router::setRoute('404_error','','errorController');
 Router::setRoute('home/toto','test/','test');
