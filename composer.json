@@ -19,5 +19,5 @@
         "php": "^8.0.2"
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": false
 }
