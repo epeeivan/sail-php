@@ -1,6 +1,6 @@
 <?php
 
-namespace app\controllers\api;
+namespace app\controllers\api\uac;
 
 use app\controllers\api\_primaries\primaryApi;
 
@@ -13,10 +13,10 @@ class category_action extends primaryApi
 	protected $vCategory_action;
 	public function __construct()
 	{
-		$this->model('category_action_model');
+		$this->model('uac/category_action_model', false, ['schema_path' => 'uac/']);
 		$this->setDb();
 		$this->category_action_model->setDb($this->getDb());
-		$this->validation('vCategory_action');
+		$this->validation('uac/vCategory_action', false, ['schema_path' => 'uac/']);
 	}
 	/**
 	 * @return [type]

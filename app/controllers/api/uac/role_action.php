@@ -1,6 +1,6 @@
 <?php
 
-namespace app\controllers\api;
+namespace app\controllers\api\uac;
 
 use app\controllers\api\_primaries\primaryApi;
 
@@ -10,10 +10,10 @@ class role_action extends primaryApi
 	protected $vRole_action;
 	public function __construct()
 	{
-		$this->model('role_action_model');
+		$this->model('uac/role_action_model', false, ['schema_path' => 'uac/']);
 		$this->setDb();
 		$this->role_action_model->setDb($this->getDb());
-		$this->validation('vRole_action');
+		$this->validation('uac/vRole_action', false, ['schema_path' => 'uac/']);
 	}
 	// public function get()
 	// {

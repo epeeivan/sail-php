@@ -5,23 +5,27 @@ namespace app\controllers\api\_primaries;
 use system\core\Controller;
 use system\core\Validation;
 use app\models\uac\useraccount_model;
+use Exception;
 
 abstract class primaryApi extends Controller
 {
     protected $token;
-    protected $useraccount_model ;
+    protected $useraccount_model;
     public function __construct()
     {
         $this->lang("lang");
         $this->lang("errors");
         $this->lang("labels");
         $this->lang("messages");
-		$this->model('uac/useraccount_model', false, ['schema_path' => 'uac/']);
-		$this->setDb();
-		$this->useraccount_model->setDb($this->db);
+        $this->model('uac/useraccount_model', false, ['schema_path' => 'uac/']);
+        $this->setDb();
+        $this->useraccount_model->setDb($this->db);
         $message = "token_success";
         // $this->useraccount_model = new useraccount_model();
-        $this->verifyToken();
+        $tokenResponse = $this->verifyToken();
+        if (!$tokenResponse['status']) {
+            throw new Exception($tokenResponse["message"], 1);
+        }
     }
     /**
      * @param null $data
@@ -43,17 +47,27 @@ abstract class primaryApi extends Controller
 
     public function verifyToken()
     {
-        $message = "token_success";
-        $datas  = array(
-            "api_token" => $_GET["token"],
-        );
-        $uId = $this->useraccount_model->get(["USER_ID"], $datas);
-        if (empty($uId)) {
+
+        $ret = [
+            "status" => false,
+            "message" => lang("unknow_token")
+        ];
+        if (isset($_GET["token"]) && !empty($_GET["token"])) {
             # code...
-            $message = "unknow_token";
+            $datas  = array(
+                "api_token" => $_GET["token"],
+            );
+            $this->useraccount_model->hydrater($datas);
+            $uId = $this->useraccount_model->get();
+            if (!empty($uId)) {
+                # code...
+                $ret["status"] = true;
+                $ret["message"] = lang("token_success");
+            }
+            // $this->responseJson(null, lang($message));
         }
-        $this->responseJson(null, lang($message));
-        return;
+
+        return $ret;
     }
     /**
      * @param mixed $model

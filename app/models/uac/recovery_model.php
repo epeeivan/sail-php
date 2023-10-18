@@ -16,18 +16,24 @@ class recovery_model extends Model
 	}
 	public function get(array $columns = null, $request = null)
 	{
-		$res = $this->db->get("*")
+		$res = $this->db->select("*")
 			->from($this->getTable())
-			->where($this->getId(), null, "!=");
+			->where($this->getId(), "d", "!=");
 
 		!$this->isColumnEmpty($this->getId()) ? $res->and($this->getId(), $this->getIdValue()) : null;
-		!$this->isColumnEmpty("USER_ID") ? $res->and($this->getColumn("USER_ID"), $this->getColumn("USER_ID")) : null;
-		!$this->isColumnEmpty("STATE") ? $res->and($this->getColumn("STATE"), $this->getColumn("STATE")) : null;
-		!$this->isColumnEmpty("REC_TOKEN") ? $res->and($this->getColumn("REC_TOKEN"), $this->getColumn("REC_TOKEN")) : null;
-		!$this->isColumnEmpty("EXPIRE_AT") ? $res->and($this->getColumn("EXPIRE_AT"), "%" . $this->getColumn("EXPIRE_AT") . "%", " LIKE") : null;
-		!isset($request["unexpired"]) ? $res->and($this->getColumn("EXPIRE_AT"), date("Y-m-d H:i:s"), ">") : null;
-		!isset($request["expired"]) ? $res->and($this->getColumn("EXPIRE_AT"), date("Y-m-d H:i:s"), "<") : null;
+		!$this->isColumnEmpty("USER_ID") ? $res->and("USER_ID", $this->getColumnValue("USER_ID")) : null;
+		!$this->isColumnEmpty("STATE") ? $res->and("STATE", $this->getColumnValue("STATE")) : null;
+		!$this->isColumnEmpty("REC_TOKEN") ? $res->and("REC_TOKEN", $this->getColumnValue("REC_TOKEN")) : null;
+		!$this->isColumnEmpty("EXPIRE_AT") ? $res->and("EXPIRE_AT", "%" . $this->getColumnValue("EXPIRE_AT") . "%", " LIKE") : null;
+		isset($request["unexpired"]) ? $res->and("EXPIRE_AT", date("Y-m-d H:i:s"), ">") : null;
+		isset($request["expired"]) ? $res->and("EXPIRE_AT", date("Y-m-d H:i:s"), "<") : null;
 
-		return $res->get()->result();
+		switch (true) {
+			case isset($request["unexpired"]) || isset($request["expired"]) || !$this->isColumnEmpty("REC_TOKEN"):
+				return $res->get()->single();
+
+			default:
+				return $res->get()->result();
+		}
 	}
 }

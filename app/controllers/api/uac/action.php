@@ -1,6 +1,6 @@
 <?php
 
-namespace app\controllers\api;
+namespace app\controllers\api\uac;
 
 use app\controllers\api\_primaries\primaryApi;
 
@@ -11,10 +11,10 @@ class action extends primaryApi
 	public function __construct()
 	{
 		parent::__construct();
-		$this->model('action_model');
+		$this->model('uac/action_model', false, ['schema_path' => 'uac/']);
 		$this->setDb();
 		$this->action_model->setDb($this->getDb());
-		$this->validation('uac/vAction');
+		$this->validation('uac/vAction', false, ['schema_path' => 'uac/']);
 	}
 	public function get()
 	{

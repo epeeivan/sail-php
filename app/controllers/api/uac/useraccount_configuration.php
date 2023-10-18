@@ -14,9 +14,9 @@ class useraccount_configuration extends primaryApi
 
 	public function __construct()
 	{
-		$this->model('useraccount_configuration_model');
+		$this->model('useraccount_configuration_model', false, ['schema_path' => 'uac/']);
 		$this->useraccount_configuration_model->setDb();
-		$this->validation('vUseraccount_configuration');
+		$this->validation('vUseraccount_configuration', false, ['schema_path' => 'uac/']);
 		$this->library("userRedirect");
 	}
 	/**

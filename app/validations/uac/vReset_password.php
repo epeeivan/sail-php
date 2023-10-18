@@ -11,7 +11,7 @@ class vReset_password extends Validation
         $this->setRulesGroup('vReset_password');
         $this->setRules(
             [
-                'token' => 'required|varchar|max_length(500)',
+                'rec_token' => 'required|varchar|max_length(500)',
                 'password' => 'required|varchar|max_length(500)',
                 'confirm_password' => 'required|varchar|max_length(500)|matches[password]',
                 // 'created_at' => 'datetime',
