@@ -1,6 +1,6 @@
 <?php
 
-namespace app\controllers\api;
+namespace app\controllers\api\uac;
 
 use app\controllers\api\_primaries\primaryApi;
 use Dotenv\Parser\Value;
@@ -14,9 +14,9 @@ class useraccount_configuration extends primaryApi
 
 	public function __construct()
 	{
-		$this->model('useraccount_configuration_model', false, ['schema_path' => 'uac/']);
+		$this->model('uac/useraccount_configuration_model', false, ['schema_path' => 'uac/']);
 		$this->useraccount_configuration_model->setDb();
-		$this->validation('vUseraccount_configuration', false, ['schema_path' => 'uac/']);
+		$this->validation('uac/vUseraccount_configuration', false, ['schema_path' => 'uac/']);
 		$this->library("userRedirect");
 	}
 	/**
@@ -26,25 +26,30 @@ class useraccount_configuration extends primaryApi
 	{
 		$this->responseJson($this->useraccount_configuration_model->get());
 	}
-	public function add()
+	public function configurationExist()
 	{
-		$this->genAdd("useraccount_configuration_model", "vUseraccount_configuration");
+		$this->responseJson($this->useraccount_configuration_model->configuration_exist($_GET));
+	}
+	public function add()
+	{var_dump($this->useraccount_configuration_model->configuration_exist($_GET));
+		if (!$this->useraccount_configuration_model->configuration_exist($_GET)) {
+			# code...
+			$this->genAdd("useraccount_configuration_model", "vUseraccount_configuration");
+		}else{
+			$this->responseJson(null,lang("configuration_exist"));
+		}
 	}
 	public function update()
 	{
 		if (isset($_POST["user_id"])) {
 			// getting id
 			$_POST["user_id"] = intval($_POST["user_id"]);
-			// casting to boolean
-			foreach ($_POST as $key => $value) {
-				if ($value == "true" || $value == "false") {
-					$_POST[$key] =($value == "true" ? 2 : 1);
-				}
-			}
+
 			// fill model object
 			$this->useraccount_configuration_model->hydrater($_POST);
 			// get an existing configuration
 			$config = $this->useraccount_configuration_model->get(null, $_POST);
+
 			// 
 			!empty($config) ? $_POST["config_id"] = $config["CONFIG_ID"] : null;
 

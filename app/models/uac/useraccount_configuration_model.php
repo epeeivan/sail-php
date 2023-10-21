@@ -32,4 +32,8 @@ class useraccount_configuration_model extends Model
 		$res->get();
 		return isset($request["count"]) ? $res->single()["count"] : (!empty($request["user_id"]) ? $res->single() : $res->result());
 	}
+	public function configuration_exist($request)
+	{
+		return empty($this->get(null, $request)) ? false : true;
+	}
 }
