@@ -176,9 +176,9 @@ abstract class primaryApi extends Controller
      * 
      * @return [type]
      */
-    public function genAdd($model, $validation = null, $message = null)
+    public function genAdd($model, $validation = null, $message = null, $return_bool = null)
     {
-        $this->genUpAdd($model, $validation, "add", $message);
+        $this->genUpAdd($model, $validation, "add", $message, $return_bool);
     }
     /**
      * @param mixed $model
@@ -187,16 +187,25 @@ abstract class primaryApi extends Controller
      * 
      * @return [type]
      */
-    public function genUpAdd($model, $validation = null, $func, $message = null)
+    public function genUpAdd($model, $validation = null, $func, $message = null, $return_bool = null)
     {
         if ((isset($validation) && $this->$validation->run()) || !isset($validation)) {
             $this->$model->hydrater($_POST);
             if ($this->$model->$func()) {
+                if (isset($return_bool)) {
+                    return true;
+                }
                 $this->responseJson($_POST, $message ?? "done");
             } else {
+                if (isset($return_bool)) {
+                    return false;
+                }
                 $this->responseJson(null, lang("fields_empty"));
             }
         } else {
+            if (isset($return_bool)) {
+                return false;
+            }
             $this->responseJson(null, lang("fields_empty"));
         }
     }
