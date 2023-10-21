@@ -61,7 +61,7 @@ class useraccount extends primaryApi
 	/**
 	 * @return [type]
 	 */
-	public function add()
+	public function add($boolean_return = null)
 	{
 		if ($this->vUseraccount->run()) {
 			$_POST["password"] = md5($_POST["password"]);
@@ -75,19 +75,19 @@ class useraccount extends primaryApi
 					# code...
 					if ($this->useraccount_model->add()) {
 						$_POST["user_id"] = $this->getDb()->lastInsertId();
-						$this->responseJsonFromState($this->explodeMapAndAdd("useraccount_role_model", "vUseraccount_role", "role_id"));
+						return $boolean_return ? ["status" => true] : $this->responseJsonFromState($this->explodeMapAndAdd("useraccount_role_model", "vUseraccount_role", "role_id"));
 					} else {
 						$this->responseJson(null, "");
 					}
 				} else {
-					$this->responseJson(null, lang("item_exist", ["item" => lang("phone_number")]));
+					return $boolean_return ? ["status" => false, "message" => lang("item_exist", ["item" => lang("phone_number")])] : $this->responseJson(null, lang("item_exist", ["item" => lang("phone_number")]));
 				}
 			} else {
 				// email exist already
-				$this->responseJson(null, lang("email_exist"));
+				return $boolean_return ? ["status" => false, "message" => lang("email_exist")] : $this->responseJson(null, lang("email_exist"));
 			}
 		} else {
-			$this->responseJson(null, lang("fields_empty"));
+			return $boolean_return ? ["status" => false, "message" => lang("fields_empty")] :$this->responseJson(null, lang("fields_empty"));
 		}
 	}
 	private function emailExist()

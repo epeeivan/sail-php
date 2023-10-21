@@ -168,7 +168,7 @@ abstract class primaryApi extends Controller
      */
     public function genUpdate($model, $validation = null, $message = null, $return_bool = null)
     {
-        $this->genUpAdd($model, $validation, "update", $message, $return_bool);
+        return $this->genUpAdd($model, $validation, "update", $message, $return_bool);
     }
     /**
      * @param mixed $model
@@ -178,7 +178,7 @@ abstract class primaryApi extends Controller
      */
     public function genAdd($model, $validation = null, $message = null, $return_bool = null)
     {
-        $this->genUpAdd($model, $validation, "add", $message, $return_bool);
+        return $this->genUpAdd($model, $validation, "add", $message, $return_bool);
     }
     /**
      * @param mixed $model
