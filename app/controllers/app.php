@@ -11,13 +11,13 @@ class app extends Controller
 {
     protected $appGenerator_model;
     private $dbStructure = [];
+    protected $codeFormatter;
     public function __construct()
     {
 
-        $this->model('appGenerator_model');
+        $this->model('appGenerator_model', false, ["no_schema" => true]);
         $this->appGenerator_model->setDb();
         $this->library('codeFormatter');
-        // var_dump($this->codeFormatter);
     }
     function index()
     {
@@ -190,7 +190,7 @@ class app extends Controller
 
                 break;
             case 'controller':
-                $basicDeclaration .= "namespace app\controllers\api;use system\core\Controller;class " . $name . " extends Controller{protected $" . $name . "_model;protected $"."v" . ucfirst($name) . "; public function __construct(){";
+                $basicDeclaration .= "namespace app\controllers\api;use system\core\Controller;class " . $name . " extends Controller{protected $" . $name . "_model;protected $" . "v" . ucfirst($name) . "; public function __construct(){";
                 break;
             case 'schema':
                 $basicDeclaration .= "namespace app\schemas;trait " . $name . "_model_schema{";

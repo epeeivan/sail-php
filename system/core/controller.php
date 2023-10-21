@@ -74,14 +74,14 @@ class Controller
     {
 
         $modName = Loader::resourceClassName($mod);
-        $schemaName =  ($options["schema_path"] ?? "") . $modName . "_schema";
-        // $schemaFileName = (getConfig('paths')['schemas_folder'] . ($options["schema_path"] ?? "") . $modName) . "_schema" . ".php";
-        // var_dump($mod);
-        // var_dump(file_exists($schemaFileName));
-
-        Loader::schema($schemaName);
-
-
+        if (!isset($options["no_schema"])) {
+            # code...
+            $schemaName =  ($options["schema_path"] ?? "") . $modName . "_schema";
+            // $schemaFileName = (getConfig('paths')['schemas_folder'] . ($options["schema_path"] ?? "") . $modName) . "_schema" . ".php";
+            // var_dump($mod);
+            // var_dump(file_exists($schemaFileName));
+            Loader::schema($schemaName);
+        }
         if ($is_base) {
             $this->base_model = Loader::model($mod);
             // $this->base_model->setDb();
