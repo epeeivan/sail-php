@@ -166,9 +166,9 @@ abstract class primaryApi extends Controller
      * 
      * @return [type]
      */
-    public function genUpdate($model, $validation = null, $message = null)
+    public function genUpdate($model, $validation = null, $message = null, $return_bool = null)
     {
-        $this->genUpAdd($model, $validation, "update", $message);
+        $this->genUpAdd($model, $validation, "update", $message, $return_bool);
     }
     /**
      * @param mixed $model
