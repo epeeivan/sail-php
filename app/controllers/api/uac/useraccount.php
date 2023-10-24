@@ -87,7 +87,7 @@ class useraccount extends primaryApi
 				return $boolean_return ? ["status" => false, "message" => lang("email_exist")] : $this->responseJson(null, lang("email_exist"));
 			}
 		} else {
-			return $boolean_return ? ["status" => false, "message" => lang("fields_empty")] :$this->responseJson(null, lang("fields_empty"));
+			return  $boolean_return ? ["status" => false, "message" => lang("fields_empty")] :$this->responseJson(null, lang("fields_empty"));
 		}
 	}
 	private function emailExist()
