@@ -161,7 +161,7 @@ class useraccount extends primaryApi
 				// get session informations
 				// 
 				$urlToRedirect = $this->connectInSession($profile);
-				$this->responseJson([], "login done", url($urlToRedirect));
+				$this->responseJson([], lang("login_done"), url($urlToRedirect));
 			}
 		} else {
 			$this->responseJson(null, lang("fields_empty"));
@@ -171,22 +171,13 @@ class useraccount extends primaryApi
 	{
 		$this->useraccount_role_model->hydrater(["USER_ID" => $profile["USER_ID"]]);
 		// 
-		$urlToRedirect = "dashboard/schoolSelect";
+		$urlToRedirect = getConfig("loggedURl");
 		$roles = $this->useraccount_role_model->getUserRoles();
 		$config = $this->useraccount_configuration_model->get(null, ["user_id" => $profile["USER_ID"]]);
 		// 
 		$session_datas = ["profile" => $profile, "roles" => $roles];
 		!empty($config) ? $session_datas["config"] = $config : null;
 		// 
-		// if (!empty($esth) && is_array($esth)) {
-		// 	if (count($esth) > 1) {
-		// 		# code...
-		// 		$session_datas["esth"] = $esth;
-		// 	} else {
-		// 		$session_datas["current_esth"] = $esth[0];
-		// 		$urlToRedirect = "dashbaord";
-		// 	}
-		// }
 		Session::set("user", $session_datas);
 		return $urlToRedirect;
 	}
