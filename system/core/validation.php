@@ -6,6 +6,7 @@
 
 namespace system\core;
 
+use DateTime;
 use Exception;
 
 class Validation
@@ -220,29 +221,29 @@ class Validation
             case 'varchar':
             case 'mediumtext':
                 if (!is_string($value)) {
-                    throw new Exception(lang("is_required"));
+                    throw new Exception(lang("type_error", ["name" => $label, "type" => lang("string")]));
                 }
                 break;
             case 'double':
                 if (!is_double($value)) {
-                    throw new Exception(lang("is_required"));
+                    throw new Exception(lang("type_error", ["name" => $label, "type" => lang("dooble")]));
                 }
                 break;
             case 'real':
                 if (!is_float($value)) {
-                    throw new Exception(lang("is_required"));
+                    throw new Exception(lang("type_error", ["name" => $label, "type" => lang("real")]));
                 }
                 break;
             case 'datetime':
             case 'date':
                 if (!is_date($value)) {
-                    throw new Exception(lang(""));
+                    throw new Exception(lang("type_error", ["name" => $label, "type" => lang("date")]));
                 }
                 break;
             case 'integer':
             case 'bigint':
                 if (!is_numeric($value)) {
-                    throw new Exception(lang("must_be_an") . "cc " . lang("integer"));
+                    throw new Exception(lang("type_error", ["name" => $label, "type" => lang("integer")]));
                 }
                 break;
             case 'matches':
@@ -298,6 +299,35 @@ class Validation
                     }
                 }
                 break;
+            case "now":
+            case "after":
+            case "before":
+                if (strtotime($value) && strtotime($analyseResult["param"])) {
+                    // 
+                    $timeValue = strtotime($value);
+                    $timeParam  = strtotime($analyseResult["param"]);
+                    switch ($analyseResult["rule"]) {
+                        case 'now':
+                            $timeValue = strtotime(date("Y-m-d"));
+                            break;
+                        case 'after':
+                            if ($timeValue < $timeParam) {
+                                throw new Exception(lang("time_error", ["name" => $label, "operand" => lang("upper"), "param" => lang("dooble")]));
+                            }
+                            break;
+                        case 'before':
+                            if ($timeValue > $timeParam) {
+                                throw new Exception(lang("time_error", ["name" => $label, "operand" => lang("lower"), "param" => lang("dooble")]));
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    throw new Exception("Error Processing Request", 1);
+                }
+
+                break;
             default:
                 # code...
                 break;
@@ -313,7 +343,7 @@ class Validation
         $r_p = ["rule" => "", "param" => ""];
         $param = false;
         for ($i = 0; $i < strlen($ruleItem); $i++) {
-            if ($ruleItem[$i] == "[") {
+            if (array_search($ruleItem[$i], ["[", ":"]) != false) {
                 $param = true;
                 $i++;
             } else {
