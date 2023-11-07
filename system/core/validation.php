@@ -135,11 +135,11 @@ class Validation
      * @param string $rules
      * @return void
      */
-    public function setRule(string $name = "", $label = null, string $rules = "")
+    public function setRule(string $name = "", $label = null, string|callable $rules = "")
     {
 
         if (!is_null($this->getSelectedRulesGroupName())) {
-            if (!empty($name) && is_string($name) && (is_string($label) || is_null($label)) && !empty($rules) && is_string($rules)) {
+            if (!empty($name) && is_string($name) && (is_string($label) || is_null($label)) && !empty($rules) && (is_string($rules) || is_callable($rules))) {
                 if (is_null($this->getRule($name))) {
                     $this->rules[$this->selectedRulesGroup][$name] = ["rules" => $rules, "label" => $label];
                 }
@@ -156,19 +156,25 @@ class Validation
         if (is_array($rules)) {
             foreach ($rules as $key => $rule) {
                 # code...
-                if (is_array($rule)) {
-                    # code...
-                    if (isset($rule["label"]) && isset($rule["rules"])) {
-                        $this->setRule($key, $rule["label"], $rule["rules"]);
-                    } else {
-                        if (isset($rule["rules"])) {
-                            $this->setRule($key, null, $rule["rules"]);
+                switch (true) {
+                    case is_array($rule):
+                        if (isset($rule["label"]) && isset($rule["rules"])) {
+                            $this->setRule($key, $rule["label"], $rule["rules"]);
+                        } else {
+                            if (isset($rule["rules"])) {
+                                $this->setRule($key, null, $rule["rules"]);
+                            }
                         }
-                    }
-                } else {
-                    if (is_string($rule)) {
+                        break;
+
+                    case is_string($rule):
+                    case is_callable($rule):
                         $this->setRule($key, null, $rule);
-                    }
+                        break;
+
+                    default:
+                        # code...
+                        break;
                 }
             }
         }
