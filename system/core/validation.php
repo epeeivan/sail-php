@@ -299,6 +299,9 @@ class Validation
                     }
                 }
                 break;
+            case "callable":
+                $analyseResult["param"]();
+                break;
             case "now":
             case "after":
             case "before":
@@ -346,27 +349,40 @@ class Validation
     public function analyse($ruleItem): array
     {
         $r_p = ["rule" => "", "param" => ""];
-        $param = false;
-        for ($i = 0; $i < strlen($ruleItem); $i++) {
-            if (array_search($ruleItem[$i], ["[", ":"]) != false) {
-                $param = true;
-                $i++;
-            } else {
-                if ($ruleItem[$i] == "]") {
-                    $param = false;
-                    $i++;
-                }
-            }
 
-            if ($i < strlen($ruleItem)) {
-                if (!$param) {
-                    $r_p["rule"] .= $ruleItem[$i];
-                } else {
-                    $r_p["param"] .= $ruleItem[$i];
+        switch (true) {
+            case is_string($ruleItem):
+                $param = false;
+                for ($i = 0; $i < strlen($ruleItem); $i++) {
+                    if (array_search($ruleItem[$i], ["[", ":"]) != false) {
+                        $param = true;
+                        $i++;
+                    } else {
+                        if ($ruleItem[$i] == "]") {
+                            $param = false;
+                            $i++;
+                        }
+                    }
+
+                    if ($i < strlen($ruleItem)) {
+                        if (!$param) {
+                            $r_p["rule"] .= $ruleItem[$i];
+                        } else {
+                            $r_p["param"] .= $ruleItem[$i];
+                        }
+                    }
                 }
-            }
+                break;
+            case is_callable($ruleItem):
+                # code...
+                $r_p["rule"] = "callable";
+                $r_p["param"] = $ruleItem;
+
+                break;
+            default:
+                # code...
+                break;
         }
-
         return $r_p;
     }
 }
