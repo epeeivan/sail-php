@@ -188,14 +188,30 @@ class Validation
         $ret = true;
         foreach ($this->getSelectedRulesGroup() as $name => $LabelAndRulesArray) {
             if (isset($_POST[$name])) {
-                $rule_list = explode("|", $LabelAndRulesArray["rules"]);
-                foreach ($rule_list as $key1 => $ruleItem) {
-                    try {
-                        $this->eval($_POST[$name], $ruleItem, $LabelAndRulesArray["label"] ?? $name);
-                    } catch (Exception $error) {
-                        $ret = false;
-                        $this->setError($name, $error->getMessage());
-                    }
+                switch (true) {
+                    case is_string($LabelAndRulesArray["rules"]):
+                        $rule_list = explode("|", $LabelAndRulesArray["rules"]);
+                        foreach ($rule_list as $key1 => $ruleItem) {
+                            try {
+                                $this->eval($_POST[$name], $ruleItem, $LabelAndRulesArray["label"] ?? $name);
+                            } catch (Exception $error) {
+                                $ret = false;
+                                $this->setError($name, $error->getMessage());
+                            }
+                        }
+                        break;
+                    case is_callable($LabelAndRulesArray["rules"]):
+                        try {
+                            $this->eval($_POST[$name], $LabelAndRulesArray["rules"], $LabelAndRulesArray["label"] ?? $name);
+                        } catch (Exception $error) {
+                            $ret = false;
+                            $this->setError($name, $error->getMessage());
+                        }
+                        break;
+
+                    default:
+                        # code...
+                        break;
                 }
             } else {
                 $ret = false;
