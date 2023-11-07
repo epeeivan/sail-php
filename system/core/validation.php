@@ -317,12 +317,12 @@ class Validation
                                 break;
                             case 'after':
                                 if ($timeValue < $timeParam) {
-                                    throw new Exception(lang("time_error", ["name" => $label, "operand" => lang("upper"), "param" => lang("dooble")]));
+                                    throw new Exception(lang("time_error", ["name" => $label, "operand" => lang("upper"), "param" => $analyseResult["param"]]));
                                 }
                                 break;
                             case 'before':
                                 if ($timeValue > $timeParam) {
-                                    throw new Exception(lang("time_error", ["name" => $label, "operand" => lang("lower"), "param" => lang("dooble")]));
+                                    throw new Exception(lang("time_error", ["name" => $label, "operand" => lang("lower"), "param" => $analyseResult["param"]]));
                                 }
                                 break;
                             default:
