@@ -302,29 +302,34 @@ class Validation
             case "now":
             case "after":
             case "before":
-                if (strtotime($value) && strtotime($analyseResult["param"])) {
-                    // 
-                    $timeValue = strtotime($value);
-                    $timeParam  = strtotime($analyseResult["param"]);
-                    switch ($analyseResult["rule"]) {
-                        case 'now':
-                            $timeValue = strtotime(date("Y-m-d"));
-                            break;
-                        case 'after':
-                            if ($timeValue < $timeParam) {
-                                throw new Exception(lang("time_error", ["name" => $label, "operand" => lang("upper"), "param" => lang("dooble")]));
-                            }
-                            break;
-                        case 'before':
-                            if ($timeValue > $timeParam) {
-                                throw new Exception(lang("time_error", ["name" => $label, "operand" => lang("lower"), "param" => lang("dooble")]));
-                            }
-                            break;
-                        default:
-                            break;
+                if (strtotime($value)) {
+
+                    if (strtotime($_POST($analyseResult["param"]))) {
+                        // 
+                        $timeValue = strtotime($value);
+                        $timeParam  = strtotime($_POST($analyseResult["param"]));
+                        switch ($analyseResult["rule"]) {
+                            case 'now':
+                                $timeValue = strtotime(date("Y-m-d"));
+                                break;
+                            case 'after':
+                                if ($timeValue < $timeParam) {
+                                    throw new Exception(lang("time_error", ["name" => $label, "operand" => lang("upper"), "param" => lang("dooble")]));
+                                }
+                                break;
+                            case 'before':
+                                if ($timeValue > $timeParam) {
+                                    throw new Exception(lang("time_error", ["name" => $label, "operand" => lang("lower"), "param" => lang("dooble")]));
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    } else {
+                        throw new Exception(lang("type_error", ["name" => $analyseResult["param"], "type" => lang("date")]));
                     }
                 } else {
-                    throw new Exception("Error Processing Request", 1);
+                    throw new Exception(lang("type_error", ["name" => $label, "type" => lang("date")]));
                 }
 
                 break;
