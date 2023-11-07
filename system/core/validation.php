@@ -304,10 +304,10 @@ class Validation
             case "before":
                 if (strtotime($value)) {
 
-                    if (strtotime($_POST($analyseResult["param"]))) {
+                    if (strtotime($_POST[$analyseResult["param"]])) {
                         // 
                         $timeValue = strtotime($value);
-                        $timeParam  = strtotime($_POST($analyseResult["param"]));
+                        $timeParam  = strtotime($_POST[$analyseResult["param"]]);
                         switch ($analyseResult["rule"]) {
                             case 'now':
                                 $timeValue = strtotime(date("Y-m-d"));
