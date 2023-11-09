@@ -200,13 +200,13 @@ abstract class primaryApi extends Controller
                 if (isset($return_bool)) {
                     return false;
                 }
-                $this->responseJson(null, lang("fields_empty"));
+                $this->responseJson(null, getErrors(null, true));
             }
         } else {
             if (isset($return_bool)) {
                 return false;
             }
-            $this->responseJson(null, lang("fields_empty"));
+            $this->responseJson(null, getErrors(null, true));
         }
     }
 }
