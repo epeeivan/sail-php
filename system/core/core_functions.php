@@ -72,20 +72,24 @@ if (!function_exists("getErrors")) {
      * @param $label
      * @return string
      */
-    function getErrors($label = null)
+    function getErrors($label = null, $string = false)
     {
-        if (isset($label)) {
-            $ret = "";
-            if (isset($GLOBALS["errors"][$label])) {
-                if (is_array($GLOBALS["errors"][$label]) && !empty(is_array($GLOBALS["errors"][$label]))) {
-                    foreach ($GLOBALS["errors"][$label] as $key => $error) {
-                        $ret .= $error . " ";
-                    }
+
+        switch (true) {
+            case isset($label) && !$string:
+                return isset($GLOBALS["errors"][$label]) ? $GLOBALS["errors"][$label] : [];
+            case isset($label) && $string:
+                return implode(',', $GLOBALS["errors"][$label]);
+            case !isset($label) && !$string:
+                return $GLOBALS["errors"];
+            case !isset($label) && $string:
+                $ret = "";
+                foreach ($GLOBALS["errors"] as $name => $errors) {
+                    $ret .= implode(",", $errors) . " ";
                 }
-            }
-            return $ret;
-        } else {
-            return $GLOBALS["errors"];
+                return $ret;
+            default:
+                break;
         }
     }
 }
