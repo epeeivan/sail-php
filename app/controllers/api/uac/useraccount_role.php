@@ -6,36 +6,61 @@ use app\controllers\api\_primaries\primaryApi;
 
 class useraccount_role extends primaryApi
 {
-	protected $useraccount_role_model;
 	protected $vUseraccount_role;
 	public function __construct()
 	{
-		$this->model('uac/useraccount_role_model', false, ['schema_path' => 'uac/']);
+		$this->model('uac/useraccount_role_model', true, ['schema_path' => 'uac/']);
 		$this->setDb();
-		$this->useraccount_role_model->setDb($this->getDb());
+		$this->base_model->setDb($this->getDb());
 		$this->validation('uac/vUseraccount_role', false, ['schema_path' => 'uac/']);
 	}
 	public function get()
 	{
-		$this->responseJson($this->useraccount_role_model->get());
+		$this->responseJson($this->base_model->get());
 	}
-	public function add()
+	public function add($boolean_return = null)
 	{
-		$this->responseJsonFromState($this->explodeMapAndAddFromTwo("useraccount_role_model", "vUseraccount_role", "role_id", "user_id"));
+		return $this->genAdd("base_model", "vUseraccount_role", null, $boolean_return);
+	}
+	public function addMany()
+	{
+		$addState = true;
+		if (isset($_POST["role_id"])) {
+			$roleIds = [];
+			switch (true) {
+				case is_string($_POST["role_id"]):
+					$roleIds = explode(",", $_POST["role_id"]);
+
+					break;
+				case is_array($_POST["role_id"]):
+					$roleIds = $_POST["role_id"];
+					break;
+				default:
+					# code...
+					break;
+			}
+			foreach ($roleIds as $id) {
+				$_POST["role_id"] = $id;
+				if(!$this->add()){
+					return false;
+				}
+			}
+		}
+		return $addState;
 	}
 	public function getRoleUsers()
 	{
-		$this->useraccount_role_model->hydrater($_GET);
-		$this->responseJson($this->useraccount_role_model->getRoleUsers());
+		$this->base_model->hydrater($_GET);
+		$this->responseJson($this->base_model->getRoleUsers());
 	}
 	public function getUserRoles()
 	{
-		$this->useraccount_role_model->hydrater($_GET);
-		$this->responseJson($this->useraccount_role_model->getUserRoles());
+		$this->base_model->hydrater($_GET);
+		$this->responseJson($this->base_model->getUserRoles());
 	}
 	public function removeUserRole()
 	{
-		$this->useraccount_role_model->hydrater($_GET);
-		$this->responseJson($this->useraccount_role_model->removeUserRole());
+		$this->base_model->hydrater($_GET);
+		$this->responseJson($this->base_model->removeUserRole());
 	}
 }

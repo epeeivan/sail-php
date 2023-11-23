@@ -4,6 +4,10 @@ namespace app\controllers\api\uac;
 
 use app\controllers\api\_primaries\primaryApi;
 use system\core\Session;
+use app\controllers\api\uac\useraccount_role;
+use system\Loader;
+
+Loader::load("app/controllers/api/uac/useraccount_role");
 
 /**
  * [Description useraccount]
@@ -22,6 +26,7 @@ class useraccount extends primaryApi
 	protected $vConnect;
 	protected $userRedirect;
 	protected $vSet_password;
+	protected $useraccount_role;
 	public function __construct()
 	{
 		parent::__construct();
@@ -49,6 +54,7 @@ class useraccount extends primaryApi
 		$this->validation('uac/vConnect');
 		// $this->validation('uac/vBelong');
 		// $this->validation('uac/vDo');
+		$this->useraccount_role = new useraccount_role();
 	}
 	/**
 	 * @return [type]
@@ -75,7 +81,7 @@ class useraccount extends primaryApi
 					# code...
 					if ($this->useraccount_model->add()) {
 						$_POST["user_id"] = $this->getDb()->lastInsertId();
-						return $boolean_return ? ["status" => true] : $this->responseJsonFromState($this->explodeMapAndAdd("useraccount_role_model", "vUseraccount_role", "role_id"));
+						return $this->useraccount_role->addMany();
 					} else {
 						$this->responseJson(null, "");
 					}
@@ -87,7 +93,7 @@ class useraccount extends primaryApi
 				return $boolean_return ? ["status" => false, "message" => lang("email_exist")] : $this->responseJson(null, lang("email_exist"));
 			}
 		} else {
-			return  $boolean_return ? ["status" => false, "message" => lang("fields_empty")] :$this->responseJson(null, lang("fields_empty"));
+			return  $boolean_return ? ["status" => false, "message" => lang("fields_empty")] : $this->responseJson(null, lang("fields_empty"));
 		}
 	}
 	private function emailExist()
