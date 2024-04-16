@@ -5,9 +5,11 @@ namespace app\controllers\api\uac;
 use app\controllers\api\_primaries\primaryApi;
 use system\core\Session;
 use app\controllers\api\uac\useraccount_role;
+use app\controllers\api\uac\useraccount_configuration;
 use system\Loader;
 
-Loader::load("app/controllers/api/uac/useraccount_role");
+Loader::load("app/controllers/api/uac/useraccount_role.php");
+Loader::load("app/controllers/api/uac/useraccount_configuration.php");
 
 /**
  * [Description useraccount]
@@ -15,18 +17,16 @@ Loader::load("app/controllers/api/uac/useraccount_role");
 class useraccount extends primaryApi
 {
 	protected $useraccount_model;
-	protected $useraccount_role_model;
-	protected $belong_model;
-	protected $do_model;
-	protected $useraccount_configuration_model;
 	protected $vUseraccount;
-	protected $vUseraccount_role;
+	// 
+
 	protected $vUseraccount_password;
-	protected $vDo;
 	protected $vConnect;
 	protected $userRedirect;
 	protected $vSet_password;
+	// 
 	protected $useraccount_role;
+	protected $useraccount_configuration;
 	public function __construct()
 	{
 		parent::__construct();
@@ -35,26 +35,16 @@ class useraccount extends primaryApi
 		// libraries
 		$this->library("userRedirect");
 		// models
-		// $this->model('uac/useraccount_model', true, ['schema_path' => 'uac/']);
-		$this->model('uac/useraccount_role_model', false, ['schema_path' => 'uac/']);
-		// $this->model('uac/belong_model');
-		// $this->model('do_model');
-		$this->model('uac/useraccount_configuration_model', false, ['schema_path' => 'uac/']);
-		// 
 		$this->setDb();
 		// setting databases to models
 		$this->useraccount_model->setDb($this->db);
-
-		$this->useraccount_role_model->setDb($this->db);
-		$this->useraccount_configuration_model->setDb($this->db);
 		// validations
 		$this->validation('uac/vUseraccount');
 		$this->validation('uac/vSet_password');
-		$this->validation('uac/vUseraccount_role');
 		$this->validation('uac/vConnect');
-		// $this->validation('uac/vBelong');
-		// $this->validation('uac/vDo');
+		// 
 		$this->useraccount_role = new useraccount_role();
+		$this->useraccount_configuration = new useraccount_configuration();
 	}
 	/**
 	 * @return [type]
@@ -131,9 +121,9 @@ class useraccount extends primaryApi
 					if ($user["PASSWORD"] != md5($_POST["password"])) {
 						// update
 						$_POST["password"] = md5($_POST["password"]);
-						$this->userRedirect->isConnected() ? Session::get("user")["profile"]["PASSWORD"] = $_POST["password"] : '';
+						// $this->userRedirect->isConnected() ? Session::get("user")["profile"]["PASSWORD"] = $_POST["password"] : '';
 						$this->genUpdate("useraccount_model", null, lang("pass_changed"));
-						// $this->responseJson(null, lang("pass_changed"));
+						return $this->responseJson($this->useraccount_model->get([null, $_GET]));
 					} else {
 						// the given new password is the old
 						$this->responseJson(null, lang("pass_unchanged"));
@@ -164,10 +154,7 @@ class useraccount extends primaryApi
 				# code...
 				$this->responseJson(null, lang("connection_error"));
 			} else {
-				// get session informations
-				// 
-				$urlToRedirect = $this->connectInSession($profile);
-				$this->responseJson([], lang("login_done"), url($urlToRedirect));
+				$this->responseJson($profile, lang("login_done"));
 			}
 		} else {
 			$this->responseJson(null, lang("fields_empty"));
@@ -175,11 +162,11 @@ class useraccount extends primaryApi
 	}
 	private function connectInSession($profile = null)
 	{
-		$this->useraccount_role_model->hydrater(["USER_ID" => $profile["USER_ID"]]);
+		$this->useraccount_role->base_model->hydrater(["USER_ID" => $profile["USER_ID"]]);
 		// 
 		$urlToRedirect = getConfig("loggedURl");
-		$roles = $this->useraccount_role_model->getUserRoles();
-		$config = $this->useraccount_configuration_model->get(null, ["user_id" => $profile["USER_ID"]]);
+		$roles = $this->useraccount_role->base_model->getUserRoles();
+		$config = $this->useraccount_configuration->get(null, ["user_id" => $profile["USER_ID"]]);
 		// 
 		$session_datas = ["profile" => $profile, "roles" => $roles];
 		!empty($config) ? $session_datas["config"] = $config : null;
@@ -201,8 +188,6 @@ class useraccount extends primaryApi
 		if ($this->vUseraccount->run()) {
 			// 
 			$this->useraccount_model->hydrater($_POST);
-			// var_dump($this->emailExist());
-			// echo $this->useraccount_model->getColumnValue("EMAIL_ADDRESS");
 			if (!$this->emailExist()) {
 				if (!$this->phoneNumberExist()) {
 					# code...
@@ -220,8 +205,8 @@ class useraccount extends primaryApi
 						"user_id" => $userId,
 					];
 
-					$this->useraccount_role_model->hydrater($useraccount_role_datas);
-					$this->useraccount_role_model->add();
+					$this->useraccount_role->base_model->hydrater($useraccount_role_datas);
+					$this->useraccount_role->base_model->add();
 					// 
 					if (!isset($_POST["teacher"])) {
 						# code...
@@ -232,17 +217,6 @@ class useraccount extends primaryApi
 								"state" => 0,
 								"et_id" => $_POST["et_id"]
 							];
-							$this->belong_model->hydrater($belongDatas);
-							$this->belong_model->add();
-							// 
-							$doDatas = [
-								"user_id" => $userId,
-								"spec_id" => $_POST["spec_id"],
-								"level" => $_POST["level"],
-								"do_year" => date("Y")
-							];
-							$this->do_model->hydrater($doDatas);
-							$this->do_model->add();
 						}
 					}
 					// $_POST["USER_ID"] = $userId;

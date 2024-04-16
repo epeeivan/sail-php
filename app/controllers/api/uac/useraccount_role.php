@@ -41,7 +41,7 @@ class useraccount_role extends primaryApi
 			}
 			foreach ($roleIds as $id) {
 				$_POST["role_id"] = $id;
-				if(!$this->add()){
+				if (!$this->add()) {
 					return false;
 				}
 			}

@@ -21,7 +21,6 @@ class useraccount_model extends Model
 		$res = $this->db->select(isset($request["count"]) ? "count(*) as count" : "*")
 			->from($this->getTable())
 			->where("USER_ID", "d","!=");
-			// ->and("USER_ID", 2, "=");
 
 		!$this->isColumnEmpty("STATE") ? $res->and("STATE", $this->getColumnValue("STATE")) : null;
 		!$this->isColumnEmpty("MARITAL_STATUS") ? $res->and("MARITAL_STATUS", $this->getColumnValue("MARITAL_STATUS")) : null;

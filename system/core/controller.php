@@ -77,9 +77,6 @@ class Controller
         if (!isset($options["no_schema"])) {
             # code...
             $schemaName =  ($options["schema_path"] ?? "") . $modName . "_schema";
-            // $schemaFileName = (getConfig('paths')['schemas_folder'] . ($options["schema_path"] ?? "") . $modName) . "_schema" . ".php";
-            // var_dump($mod);
-            // var_dump(file_exists($schemaFileName));
             Loader::schema($schemaName);
         }
         if ($is_base) {
