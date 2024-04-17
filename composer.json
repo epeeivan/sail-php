@@ -1,0 +1,12 @@
+{
+    "name": "sail-php/sail-php",
+    "description": "sail php is an easy-to-use framework that offers you the convenience of current frameworks and that in the current context will grow exponentially and already offers you",
+    "autoload": {
+        "psr-4": {
+            "SailPhp\\SailPhp\\": "src/"
+        }
+    },
+    "require": {},
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
