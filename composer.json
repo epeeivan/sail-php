@@ -1,13 +1,17 @@
 {
     "name": "sail-php/sail-php",
+    "type": "project",
     "license": "MIT",
+    "keywords": ["sail","sail-php","php", "framework"],
     "description": "sail php is an easy-to-use framework that offers you the convenience of current frameworks and that in the current context will grow exponentially and already offers you",
     "autoload": {
         "psr-4": {
-            "SailPhp\\SailPhp\\": "src/"
+            "app\\": "app/"
         }
     },
-    "require": {},
+    "require": {
+        "php": "^8.2"
+    },
     "minimum-stability": "stable",
     "prefer-stable": true
 }
