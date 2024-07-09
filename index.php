@@ -15,12 +15,11 @@ use system\core\Session;
  *
  */
 
-$envs  = file_get_contents('./.ENV');
+$envs  = file_get_contents('./.env');
 $envsArr = explode("\n", $envs);
 
 foreach ($envsArr as $env) {
     putenv($env);
-
 }
 require "system/loader.php";
 Loader::init();
